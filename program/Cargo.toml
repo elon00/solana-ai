@@ -10,4 +10,4 @@ crate-type = ["cdylib", "lib"]
 
 [dependencies]
 solana-program = "1.18"
-thiserror = "1.0"
+thiserror = "2.0"
