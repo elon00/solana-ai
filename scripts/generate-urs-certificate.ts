@@ -7,7 +7,7 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { sha256 } from '@noble/hashes/sha256.js';
+import { sha256 } from '@noble/hashes/sha2.js';
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js';
 
 console.log('╔══════════════════════════════════════════════════════════════════════════╗');
