@@ -8,7 +8,8 @@
     "test:nist": "npx tsx tests/nist-pqc.test.mjs",
     "audit:crypto": "node scripts/audit-crypto.mjs",
     "reality:universal": "npx tsx scripts/reality-universal.ts",
-    "reality:certify": "npx tsx scripts/generate-urs-certificate.ts"
+    "reality:certify": "npx tsx scripts/generate-urs-certificate.ts",
+    "test": "npm run test:nist && npm run audit:crypto && npm run reality:universal"
   },
   "keywords": [
     "solana",
@@ -20,5 +21,12 @@
     "research"
   ],
   "author": "elon00",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@noble/hashes": "1.8.0",
+    "@noble/post-quantum": "0.7.1"
+  },
+  "devDependencies": {
+    "tsx": "4.23.13"
+  }
 }
