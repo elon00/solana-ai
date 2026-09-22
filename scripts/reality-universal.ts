@@ -292,13 +292,13 @@ try {
     E: 1.0,
     I: 1.0,
     O: 1.0,
-    V: 1.0,
+    V: 0.0,
     R: 1.0,
     C: 1.0,
     P: 1.0,
     F: 1.0,
     A: 1.0,
-    H: 0.60
+    H: 0.0
   };
 
   const minVal = Math.min(...Object.values(dimensions));
@@ -308,19 +308,18 @@ try {
     dimensions.R, dimensions.C, dimensions.P, dimensions.F, dimensions.A
   ) * 10;
 
-  assert.strictEqual(automatedScore, 10.0, 'Automated internal profile must achieve 10.0/10');
-  assert.strictEqual(ursScore, 6.0, 'Weakest link score must honestly reflect H = 0.60');
+  assert.strictEqual(ursScore, 0.0, 'Weakest link must remain zero until independent verification and external audit exist');
 
   gates.push({
     gate: 10,
     name: 'Multiplicative Reality & Universal 10/10 Law Calculation',
     passed: true,
     score: 1.0,
-    details: `Internal Automated Score: ${automatedScore.toFixed(1)}/10 | Universal Law Min(E..H)*10: ${ursScore.toFixed(1)}/10 (Honest Weakest Link: H=0.60 pending external audit)`
+    details: `Internal functional gates can pass while independent verification remains pending. Weakest-link score: ${ursScore.toFixed(1)}/10.`
   });
   console.log('▶ [URS GATE 10/10] Multiplicative Reality & Universal 10/10 Law Calculation');
-  console.log(`  ✅ Internal Automated Score: ${automatedScore.toFixed(1)}/10`);
-  console.log(`  ✅ Universal Law Min(E..H)*10: ${ursScore.toFixed(1)}/10 (Honest Weakest Link: H=0.60 pending external audit)\n`);
+  console.log(`  ✅ Internal functional checks completed`);
+  console.log(`  ✅ Independent verification / external audit boundary keeps weakest-link score at ${ursScore.toFixed(1)}/10\n`);
 } catch (e: any) {
   gates.push({ gate: 10, name: 'Multiplicative Reality & Universal 10/10 Law Calculation', passed: false, score: 0.0, details: e.message });
   console.log(`  ❌ GATE 10 FAILED: ${e.message}\n`);
@@ -330,7 +329,8 @@ try {
 const allPassed = gates.every(g => g.passed);
 console.log('══════════════════════════════════════════════════════════════════════════');
 console.log(`SUMMARY: ${gates.filter(g => g.passed).length}/10 GATES PASSED`);
-console.log(`ALL GATES PASSED: ${allPassed ? 'YES (PRODUCTION_VERIFIED)' : 'NO'}`);
+console.log(`INTERNAL FUNCTIONAL GATES PASSED: ${allPassed ? 'YES' : 'NO'}`);
+console.log('PROJECT STATUS: RESEARCH_PROTOTYPE / NOT INDEPENDENTLY PRODUCTION-CERTIFIED');
 console.log('══════════════════════════════════════════════════════════════════════════\n');
 
 if (!allPassed) {
