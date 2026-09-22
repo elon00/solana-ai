@@ -23,19 +23,21 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: program
-      - name: Generate Cargo lockfile for migration
-        run: cargo generate-lockfile --manifest-path program/Cargo.toml
       - run: cargo install cargo-audit --locked
       - run: cargo audit --file program/Cargo.lock
 
   codeql:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript, rust]
     steps:
       - uses: actions/checkout@v7
-      - uses: github/codeql-action/init@v3
+      - uses: github/codeql-action/init@v4
         with:
-          languages: javascript-typescript
+          languages: ${{ matrix.language }}
+          build-mode: none
           queries: security-extended
-      - uses: github/codeql-action/autobuild@v3
-      - uses: github/codeql-action/analyze@v3
+      - uses: github/codeql-action/analyze@v4
