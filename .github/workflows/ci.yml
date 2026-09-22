@@ -22,8 +22,19 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - name: Install JavaScript dependencies
-        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Generate dependency locks for migration
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          cargo generate-lockfile --manifest-path program/Cargo.toml
+      - name: Upload generated lockfiles
+        uses: actions/upload-artifact@v7
+        with:
+          name: dependency-lockfiles
+          path: |
+            package-lock.json
+            program/Cargo.lock
+      - name: Install locked JavaScript dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: PQC and repository tests
         run: npm test
       - name: Production dependency audit
@@ -33,4 +44,4 @@ jobs:
       - name: Rust tests
         run: cargo test --manifest-path program/Cargo.toml --locked
       - name: Rust clippy
-        run: cargo clippy --manifest-path program/Cargo.toml --all-targets -- -D warnings
+        run: cargo clippy --manifest-path program/Cargo.toml --all-targets --locked -- -D warnings
