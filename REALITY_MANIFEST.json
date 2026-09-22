@@ -5,41 +5,45 @@
   "standard": "UNIVERSAL_REALITY_SYSTEM_v1.0",
   "law": "URS_10 = min(E, I, O, V, R, C, P, F, A, H) * 10",
   "criticalFailureRule": "Any Critical Failure = 0 => Feature Cannot Be Called Production-Ready",
-  "status": "PRODUCTION_VERIFIED",
+  "status": "RESEARCH_PROTOTYPE",
   "subsystems": [
     {
       "name": "SOLANA_AI_ORCHESTRATOR",
       "description": "Autonomous AI agent task execution with post-quantum dual-hybrid authorization",
-      "status": "PRODUCTION_VERIFIED",
-      "realityScore": 1.0
+      "status": "INTERNAL_VERIFICATION_ONLY",
+      "realityScore": 1
     },
     {
       "name": "PQC_LATTICE_CORE",
       "description": "Pure TypeScript NIST FIPS 203 ML-KEM-768 and NIST FIPS 204 ML-DSA-65 cryptographic engine",
-      "status": "PRODUCTION_VERIFIED",
-      "realityScore": 1.0
+      "status": "INTERNAL_VERIFICATION_ONLY",
+      "realityScore": 1
     },
     {
       "name": "SOLANA_ON_CHAIN_PROGRAM",
       "description": "Rust Solana on-chain program for AI token minting and post-quantum account custody",
-      "status": "PRODUCTION_VERIFIED",
-      "realityScore": 1.0
+      "status": "INTERNAL_VERIFICATION_ONLY",
+      "realityScore": 1
     }
   ],
   "verificationGates": {
-    "E_ExecutionReality": 1.0,
-    "I_InputReality": 1.0,
-    "O_OutputImpact": 1.0,
-    "V_IndependentVerification": 1.0,
-    "R_Reproducibility": 1.0,
-    "C_ClaimHonesty": 1.0,
-    "P_Provenance": 1.0,
-    "F_FailClosedSafety": 1.0,
-    "A_AdversarialSecurity": 1.0,
-    "H_HumanExternalAudit": 0.60
+    "E_ExecutionReality": 1,
+    "I_InputReality": 1,
+    "O_OutputImpact": 1,
+    "V_IndependentVerification": 0,
+    "R_Reproducibility": 1,
+    "C_ClaimHonesty": 1,
+    "P_Provenance": 1,
+    "F_FailClosedSafety": 1,
+    "A_AdversarialSecurity": 1,
+    "H_HumanExternalAudit": 0
   },
-  "automatedInternalScore": 10.0,
-  "weakestLinkScore": 6.0,
-  "weakestLinkDimension": "H (Human/External Audit pending third-party firm)",
-  "productionReady": true
+  "automatedInternalScore": 10,
+  "weakestLinkScore": 0,
+  "weakestLinkDimension": "V/H (Independent verification and human/external audit pending)",
+  "productionReady": false,
+  "notes": [
+    "Internal automated tests are engineering evidence, not independent production certification.",
+    "Production readiness requires independent security review and verified deployment/operational evidence."
+  ]
 }
