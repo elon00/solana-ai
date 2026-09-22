@@ -23,6 +23,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: program
+      - name: Generate Cargo lockfile for migration
+        run: cargo generate-lockfile --manifest-path program/Cargo.toml
       - run: cargo install cargo-audit --locked
       - run: cargo audit --file program/Cargo.lock
 
