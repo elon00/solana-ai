@@ -1,7 +1,7 @@
 {
   "name": "solana-ai",
   "version": "1.0.0",
-  "description": "Solana AI Ecosystem Engine & Post-Quantum Custody Platform - NIST FIPS 203/204 compliant",
+  "description": "Solana AI and post-quantum cryptography research/prototype with reproducible ML-KEM/ML-DSA verification",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
@@ -14,9 +14,10 @@
     "solana",
     "ai",
     "post-quantum",
-    "nist-fips-203",
-    "nist-fips-204",
-    "urs-10"
+    "ml-kem",
+    "ml-dsa",
+    "cryptography",
+    "research"
   ],
   "author": "elon00",
   "license": "Apache-2.0"
