@@ -74,6 +74,6 @@ pub fn process_instruction(
     match instruction_data[0] {
         0 => create_mint(accounts, &token_accounts),
         1 => mint_to_agent(accounts, &token_accounts),
-        _ => Err(ProgramError::InvalidInstruction),
+        _ => Err(ProgramError::InvalidInstructionData),
     }
 }
