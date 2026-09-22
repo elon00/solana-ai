@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   verify:
@@ -16,23 +16,30 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
       - uses: actions/setup-node@v7
         with:
           node-version: 24
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - name: Generate dependency locks for migration
+      - name: Generate canonical dependency locks
         run: |
           npm install --package-lock-only --ignore-scripts --no-audit --no-fund
           cargo generate-lockfile --manifest-path program/Cargo.toml
-      - name: Upload generated lockfiles
-        uses: actions/upload-artifact@v7
-        with:
-          name: dependency-lockfiles
-          path: |
-            package-lock.json
-            program/Cargo.lock
+      - name: Commit lockfiles for this migration PR
+        if: github.event_name == 'pull_request' && github.head_ref == 'production-hardening-2026-09-22'
+        env:
+          HEAD_BRANCH: ${{ github.head_ref }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json program/Cargo.lock
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: commit reproducible dependency lockfiles"
+            git push origin "HEAD:$HEAD_BRANCH"
+          fi
       - name: Install locked JavaScript dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: PQC and repository tests
