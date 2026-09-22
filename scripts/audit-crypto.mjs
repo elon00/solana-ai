@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
  * Standalone Cryptographic Auditor for SHOR x402
- * Verifies 23 Invariants across:
+ * Verifies 24 Invariants across:
  * - RFC 5869 HKDF-SHA256
  * - Algorand x402 Commitment Invariants
  * - NIST FIPS 203 ML-KEM-768
  * - NIST FIPS 204 ML-DSA-65
- * - Wycheproof Negative Attacks
+ * - Repository-defined adversarial/tamper checks
  * - x402 Dual Hybrid Payment Authorization Conjunction
  */
 
@@ -15,6 +15,7 @@ import { hkdf } from '@noble/hashes/hkdf.js';
 import { sha256 } from '@noble/hashes/sha2.js';
 import { ml_kem768 } from '@noble/post-quantum/ml-kem.js';
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js';
+import { generateKeyPairSync, sign as ed25519Sign, verify as ed25519Verify } from 'node:crypto';
 
 console.log('=====================================================================');
 console.log('⚡ QMOOSA DEEP TECH AI QUANTUM PLATFORM // STANDALONE CRYPTOGRAPHIC AUDITOR');
@@ -23,7 +24,7 @@ console.log('===================================================================
 let assertionCount = 0;
 function pass(desc) {
   assertionCount++;
-  console.log(`  [${assertionCount}/23] ✅ ${desc}`);
+  console.log(`  [${assertionCount}/24] ✅ ${desc}`);
 }
 
 try {
@@ -108,17 +109,17 @@ try {
   assert.strictEqual(verified, true);
   pass('ML-DSA-65 genuine signature verified successfully');
 
-  console.log('\n▶ [TIER 6] Wycheproof Negative & Adversarial Tests:');
+  console.log('\n▶ [TIER 6] Repository-defined Adversarial Negative Tests:');
   const tamperedSig = new Uint8Array(sig);
   tamperedSig[42] ^= 0x01;
   const badSigVer = ml_dsa65.verify(tamperedSig, msg, dsaPair1.publicKey);
   assert.strictEqual(badSigVer, false);
-  pass('Wycheproof: Bit-flipped signature rejected cleanly');
+  pass('Bit-flipped signature rejected cleanly');
 
   const tamperedMsg = Buffer.from('x402 Service Authorization: srv-quantum-ai:0.005_USDC!');
   const badMsgVer = ml_dsa65.verify(sig, tamperedMsg, dsaPair1.publicKey);
   assert.strictEqual(badMsgVer, false);
-  pass('Wycheproof: Altered message rejected cleanly');
+  pass('Altered message rejected cleanly');
 
   const shortSig = sig.slice(0, 3200);
   let shortSigRejected = false;
@@ -128,7 +129,7 @@ try {
     shortSigRejected = true;
   }
   assert.strictEqual(shortSigRejected, true);
-  pass('Wycheproof: Truncated signature rejected cleanly');
+  pass('Truncated signature rejected cleanly');
 
   const badPK = dsaPair1.publicKey.slice(0, 1900);
   let badPKRejected = false;
@@ -138,20 +139,26 @@ try {
     badPKRejected = true;
   }
   assert.strictEqual(badPKRejected, true);
-  pass('Wycheproof: Malformed public key size rejected cleanly');
+  pass('Malformed public key size rejected cleanly');
 
-  console.log('\n▶ [TIER 7] x402 Dual Hybrid Payment Conjunction Conformance:');
-  const classicalValid = true;
-  const dualHybridOk = classicalValid && verified;
-  assert.strictEqual(dualHybridOk, true);
-  pass('x402 dual conjunction holds when both classical payment and ML-DSA are valid');
+  console.log('\n▶ [TIER 7] Ed25519 + ML-DSA Hybrid Conjunction Conformance:');
+  const { publicKey: edPublicKey, privateKey: edPrivateKey } = generateKeyPairSync('ed25519');
+  const edSignature = ed25519Sign(null, msg, edPrivateKey);
+  const classicalValid = ed25519Verify(null, msg, edPublicKey, edSignature);
+  assert.strictEqual(classicalValid && verified, true);
+  pass('hybrid conjunction holds when both Ed25519 and ML-DSA signatures are valid');
 
-  const failClosedOk = classicalValid && badSigVer; // badSigVer is false
-  assert.strictEqual(failClosedOk, false);
-  pass('x402 dual conjunction fails-closed when PQC component is compromised');
+  const badEdSignature = Buffer.from(edSignature);
+  badEdSignature[0] ^= 0x01;
+  const badClassicalValid = ed25519Verify(null, msg, edPublicKey, badEdSignature);
+  assert.strictEqual(badClassicalValid && verified, false);
+  pass('hybrid conjunction fails closed when Ed25519 is compromised');
+
+  assert.strictEqual(classicalValid && badSigVer, false);
+  pass('hybrid conjunction fails closed when ML-DSA is compromised');
 
   console.log('\n=====================================================================');
-  console.log(`🏆 ALL ${assertionCount}/23 CRYPTOGRAPHIC ASSERTIONS PASSED CLEANLY`);
+  console.log(`🏆 ALL ${assertionCount}/24 CRYPTOGRAPHIC ASSERTIONS PASSED CLEANLY`);
   console.log('=====================================================================\n');
   process.exit(0);
 } catch (err) {
