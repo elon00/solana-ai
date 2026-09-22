@@ -11,3 +11,9 @@ crate-type = ["cdylib", "lib"]
 [dependencies]
 solana-program = "5.0"
 thiserror = "2.0"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = [
+  'cfg(target_os, values("solana"))',
+  'cfg(feature, values("custom-heap", "custom-panic"))',
+] }

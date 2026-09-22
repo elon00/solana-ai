@@ -36,7 +36,10 @@ pub fn init_token_accounts(accounts: &[AccountInfo]) -> Result<TokenAccounts, Pr
     })
 }
 
-pub fn create_mint(accounts: &[AccountInfo], _token_accounts: &TokenAccounts) -> Result<(), ProgramError> {
+pub fn create_mint(
+    accounts: &[AccountInfo],
+    _token_accounts: &TokenAccounts,
+) -> Result<(), ProgramError> {
     let mut iter = accounts.iter();
     let mint_account_info = next_account_info(&mut iter)?;
     let _rent_sysvar_info = next_account_info(&mut iter)?;
@@ -47,7 +50,10 @@ pub fn create_mint(accounts: &[AccountInfo], _token_accounts: &TokenAccounts) ->
     Ok(())
 }
 
-pub fn mint_to_agent(accounts: &[AccountInfo], _token_accounts: &TokenAccounts) -> Result<(), ProgramError> {
+pub fn mint_to_agent(
+    accounts: &[AccountInfo],
+    _token_accounts: &TokenAccounts,
+) -> Result<(), ProgramError> {
     let mut iter = accounts.iter();
     let agent_account_info = next_account_info(&mut iter)?;
     let _mint_account_info = next_account_info(&mut iter)?;
