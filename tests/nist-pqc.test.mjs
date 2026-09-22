@@ -69,7 +69,7 @@ test('NIST TIER 6: NIST FIPS 204 ML-DSA-65 Signing & Verification', () => {
   assert.equal(ver.valid, true);
 });
 
-test('NIST TIER 7: Wycheproof Negative & Adversarial Tests', () => {
+test('NIST TIER 7: Repository-defined Adversarial Negative Tests', () => {
   const keyPair = generatePqcKeyPair('ML-DSA-65');
   const sig = createPqcHybridSignature('TX_ALGORAND_TEST_002', keyPair, 0.005, 'srv-quantum-ai');
 
