@@ -9,5 +9,5 @@ license = "Apache-2.0"
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
-solana-program = "1.18"
+solana-program = "5.0"
 thiserror = "2.0"
