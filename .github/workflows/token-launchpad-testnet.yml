@@ -120,6 +120,7 @@ jobs:
           echo "address=$MINT" >> "$GITHUB_OUTPUT"
 
       - name: Initialize on-chain token metadata
+        id: metadata
         shell: bash
         env:
           TOKEN_NAME: ${{ inputs.name }}
@@ -130,18 +131,28 @@ jobs:
           spl-token --url "$TESTNET_RPC" --program-2022 initialize-metadata             "${{ steps.mint.outputs.address }}"             "$TOKEN_NAME"             "$TOKEN_SYMBOL"             "$METADATA_URI"
 
       - name: Create authority token account
+        id: token_account
         shell: bash
         run: |
           set -euo pipefail
-          spl-token --url "$TESTNET_RPC" --program-2022 create-account "${{ steps.mint.outputs.address }}"
+          OUT="$RUNNER_TEMP/create-account.txt"
+          spl-token --url "$TESTNET_RPC" --program-2022 create-account "${{ steps.mint.outputs.address }}" | tee "$OUT"
+          SIGNATURE="$(awk -F': ' '/^Signature:/ {print $2}' "$OUT" | tail -1)"
+          [[ -n "$SIGNATURE" ]] || { echo "Token-account transaction signature missing." >&2; exit 1; }
+          echo "signature=$SIGNATURE" >> "$GITHUB_OUTPUT"
 
       - name: Mint initial supply
+        id: issuance
         shell: bash
         env:
           INITIAL_SUPPLY: ${{ inputs.initial_supply }}
         run: |
           set -euo pipefail
-          spl-token --url "$TESTNET_RPC" --program-2022 mint "${{ steps.mint.outputs.address }}" "$INITIAL_SUPPLY"
+          OUT="$RUNNER_TEMP/mint-initial-supply.txt"
+          spl-token --url "$TESTNET_RPC" --program-2022 mint "${{ steps.mint.outputs.address }}" "$INITIAL_SUPPLY" | tee "$OUT"
+          SIGNATURE="$(awk -F': ' '/^Signature:/ {print $2}' "$OUT" | tail -1)"
+          [[ -n "$SIGNATURE" ]] || { echo "Initial-issuance transaction signature missing." >&2; exit 1; }
+          echo "signature=$SIGNATURE" >> "$GITHUB_OUTPUT"
 
       - name: Verify mint state
         id: verify
@@ -177,6 +188,12 @@ jobs:
             "initialMintRequest": "$INITIAL_SUPPLY",
             "observedSupply": "${{ steps.verify.outputs.supply }}",
             "metadataUri": "$METADATA_URI",
+            "transactionSignatures": {
+              "createMint": "${{ steps.mint.outputs.signature }}",
+              "initializeMetadata": "${{ steps.metadata.outputs.signature }}",
+              "createAuthorityTokenAccount": "${{ steps.token_account.outputs.signature }}",
+              "initialIssuance": "${{ steps.issuance.outputs.signature }}"
+            },
             "supplyPolicy": "UNCAPPED_WHILE_MINT_AUTHORITY_REMAINS_ACTIVE",
             "sourceCommit": "$GITHUB_SHA",
             "createdAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -188,7 +205,11 @@ jobs:
             echo "- Authority: `${{ steps.signer.outputs.authority }}`"
             echo "- Observed supply: `${{ steps.verify.outputs.supply }}`"
             echo "- Supply policy: uncapped while the mint authority remains active"
-            echo "- Explorer: https://explorer.solana.com/address/${{ steps.mint.outputs.address }}?cluster=testnet"
+            echo "- Mint Explorer: https://explorer.solana.com/address/${{ steps.mint.outputs.address }}?cluster=testnet"
+            echo "- Create mint tx: https://explorer.solana.com/tx/${{ steps.mint.outputs.signature }}?cluster=testnet"
+            echo "- Metadata tx: https://explorer.solana.com/tx/${{ steps.metadata.outputs.signature }}?cluster=testnet"
+            echo "- Token account tx: https://explorer.solana.com/tx/${{ steps.token_account.outputs.signature }}?cluster=testnet"
+            echo "- Initial issuance tx: https://explorer.solana.com/tx/${{ steps.issuance.outputs.signature }}?cluster=testnet"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload launch evidence
