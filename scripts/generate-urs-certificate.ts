@@ -48,10 +48,12 @@ const certificatePayload = {
     cryptographicCore: 'PURE_TYPESCRIPT_PQC_EXECUTION',
     kemScheme: 'NIST_FIPS_203_ML_KEM_768',
     signatureScheme: 'NIST_FIPS_204_ML_DSA_65',
-    onChainProgram: 'SOLANA_RUST_TOKEN_PROGRAM',
-    agentOrchestration: 'SOLANA_AI_PQC_VERIFIED_TASKS',
+    onChainProgram: 'SOLANA_RUST_PQC_PROOF_REGISTRY',
+    agentOrchestration: 'REGISTERED_ACTION_EXECUTION_WITH_PQC_PROOFS',
     failClosedConjunction: true,
-    simulationEliminated: true
+    placeholderCryptoEliminated: true,
+    onChainDeploymentVerified: false,
+    tokenLaunchVerified: false
   },
   evidenceScores: {
     E_ExecutionReality: 1.0,
