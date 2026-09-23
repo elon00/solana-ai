@@ -213,6 +213,18 @@ try {
   const keyPair = generatePqcKeyPair('ML-DSA-65');
   const sigResult = createPqcHybridSignature('SOLANA_AGENT_SETTLEMENT', keyPair, 0.1, 'solana-agent-pqc');
   assert.strictEqual(sigResult.quantumResistanceScore, 1.0);
+  const authorizationVerification = verifyPqcSignature(
+    sigResult.hybridSignature,
+    'SOLANA_AGENT_SETTLEMENT',
+    keyPair.publicKey,
+    0.1,
+    'solana-agent-pqc'
+  );
+  assert.strictEqual(
+    authorizationVerification.valid,
+    true,
+    'Gate 6 must execute full ML-DSA-65 verification'
+  );
   assert.ok(sigResult.verificationProof.includes('NIST_FIPS_204_ML_DSA_65_VERIFIED'));
 
   gates.push({
