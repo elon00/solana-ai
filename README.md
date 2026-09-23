@@ -6,6 +6,7 @@
 - Solana Testnet Program: https://explorer.solana.com/address/Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3?cluster=testnet
 - Testnet deployment transaction: https://explorer.solana.com/tx/5DKkhtQWdPBZvxUokeoDYnhKuCXEtM2UMa2pgFdCgJyS9VLTTVz9MPCqc368gHMvvBLqtwsy2nbVQJF9dqGqgxDN?cluster=testnet
 - Deployment workflow evidence: https://github.com/elon00/solana-ai/actions/runs/35848403836
+- Windows one-click redeploy helper: `ONE-CLICK-TESTNET-DEPLOY.bat`
 
 Solana-focused blockchain and AI research project with post-quantum cryptography experiments, Rust/Solana program work, and reproducible cryptographic verification scripts.
 
