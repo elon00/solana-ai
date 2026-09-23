@@ -31,4 +31,7 @@ export interface SolanaAiAgentTask {
   status: 'PENDING' | 'EXECUTING' | 'COMPLETED' | 'FAIL_CLOSED';
   pqcSignature?: string;
   executionTimestamp: string;
+  output?: unknown;
+  evidence?: Record<string, unknown>;
+  error?: string;
 }
