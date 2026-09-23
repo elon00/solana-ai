@@ -109,7 +109,6 @@ export function createPqcHybridSignature(
 ): {
   hybridSignature: string;
   mlDsaComponent: string;
-  ed25519Component: string;
   verificationProof: string;
   quantumResistanceScore: number;
 } {
@@ -131,12 +130,14 @@ export function createPqcHybridSignature(
     dsaSigHex = bytesToHex(sig);
   }
 
-  const classicalDigest = bytesToHex(sha256(messageBytes)).substring(0, 32);
+  const payloadDigest = bytesToHex(sha256(messageBytes));
 
   return {
-    hybridSignature: `PQC-HYBRID-x402.${classicalDigest}.${dsaSigHex.substring(0, 64)}`,
+    // The complete ML-DSA-65 signature is carried in the envelope.
+    // This is intentionally not described as an Ed25519 hybrid: no classical
+    // signature is fabricated or inferred.
+    hybridSignature: `PQC-MLDSA65.${payloadDigest}.${dsaSigHex}`,
     mlDsaComponent: dsaSigHex,
-    ed25519Component: `ED25519-SIG-${classicalDigest}`,
     verificationProof: `NIST_FIPS_204_ML_DSA_65_AUTHENTICATED_${keyPair.publicKeyFingerprint}`,
     quantumResistanceScore: 1.0,
   };
@@ -153,38 +154,34 @@ export function verifyPqcSignature(
   serviceId: string = 'srv-shor-orchestrator'
 ) {
   const payload = `tx:${txId}|amt:${amount}|srv:${serviceId}|pub:${publicKey.substring(0, 32)}`;
-  const encoder = new TextEncoder();
-  const messageBytes = encoder.encode(payload);
+  const messageBytes = new TextEncoder().encode(payload);
 
   try {
-    let isValid = false;
-    let sigBytes: Uint8Array | null = null;
+    let sigBytes: Uint8Array;
 
-    if (signature.length >= 6618) {
-      // Direct raw 3,309-byte hex
-      sigBytes = hexToBytes(signature);
-    } else {
-      // Look up in active storage or check signature format
-      sigBytes = null;
-    }
-
-    if (sigBytes && sigBytes.length === 3309 && publicKey.length === 3904) {
-      isValid = ml_dsa65.verify(sigBytes, messageBytes, hexToBytes(publicKey));
-    } else if (signature.startsWith('PQC-HYBRID-x402.')) {
+    if (signature.startsWith('PQC-MLDSA65.')) {
       const parts = signature.split('.');
-      if (parts.length === 3) {
-        const expectedDigest = bytesToHex(sha256(messageBytes)).substring(0, 32);
-        isValid = parts[1] === expectedDigest;
-      }
+      if (parts.length !== 3) throw new Error('invalid signature envelope');
+      const expectedDigest = bytesToHex(sha256(messageBytes));
+      if (parts[1] !== expectedDigest) throw new Error('payload digest mismatch');
+      sigBytes = hexToBytes(parts[2]);
+    } else {
+      const raw = signature.replace(/^0xpqc_mldsa65_/, '').replace(/^0x/, '');
+      sigBytes = hexToBytes(raw);
     }
+
+    const pubBytes = hexToBytes(publicKey.replace(/^0x/, ''));
+    const isValid =
+      sigBytes.length === 3309 &&
+      pubBytes.length === 1952 &&
+      ml_dsa65.verify(sigBytes, messageBytes, pubBytes);
 
     return {
       valid: isValid,
       algorithm: 'NIST FIPS 204 ML-DSA-65',
-      specification: 'Pure TypeScript lattice-based digital signature algorithm conforming to NIST FIPS 204',
+      specification: 'Pure TypeScript ML-DSA-65 verification with full signature bytes',
       signatureDigestMatch: isValid,
-      latticeVerificationTimeUs: 124,
-      securityBits: 192,
+      securityBits: isValid ? 192 : 0,
     };
   } catch {
     return {
@@ -192,7 +189,6 @@ export function verifyPqcSignature(
       algorithm: 'NIST FIPS 204 ML-DSA-65',
       specification: 'Signature verification aborted (fail-closed)',
       signatureDigestMatch: false,
-      latticeVerificationTimeUs: 0,
       securityBits: 0,
     };
   }
