@@ -2,7 +2,7 @@
  * Solana AI agent runtime.
  *
  * Tasks only reach COMPLETED after a registered action handler actually runs.
- * Unknown actions and handler errors fail closed.
+ * Unknown actions, non-canonicalizable data, and handler errors fail closed.
  */
 
 import { sha256 } from '@noble/hashes/sha2.js';
@@ -16,19 +16,59 @@ import { PqcKeyPair, SolanaAiAgentTask } from './types.js';
 
 export type AgentActionHandler = (input: unknown) => unknown | Promise<unknown>;
 
-function canonicalize(value: unknown): string {
-  if (value === null || typeof value !== 'object') {
-    return JSON.stringify(value);
-  }
-  if (Array.isArray(value)) {
-    return `[${value.map((item) => canonicalize(item)).join(',')}]`;
+function canonicalize(value: unknown, seen = new WeakSet<object>()): string {
+  if (value === null) return 'null:null';
+
+  switch (typeof value) {
+    case 'undefined':
+      return 'undefined:';
+    case 'string':
+      return `string:${JSON.stringify(value)}`;
+    case 'boolean':
+      return `boolean:${value ? 'true' : 'false'}`;
+    case 'bigint':
+      return `bigint:${value.toString(10)}`;
+    case 'number':
+      if (!Number.isFinite(value)) throw new Error('Non-finite numbers cannot be proof-canonicalized');
+      return `number:${Object.is(value, -0) ? '-0' : value.toString()}`;
+    case 'function':
+    case 'symbol':
+      throw new Error(`Unsupported proof value type: ${typeof value}`);
+    case 'object':
+      break;
+    default:
+      throw new Error('Unsupported proof value');
   }
 
-  const object = value as Record<string, unknown>;
-  return `{${Object.keys(object)
-    .sort()
-    .map((key) => `${JSON.stringify(key)}:${canonicalize(object[key])}`)
-    .join(',')}}`;
+  const object = value as object;
+  if (seen.has(object)) throw new Error('Cyclic proof values are not supported');
+  seen.add(object);
+
+  try {
+    if (value instanceof Uint8Array) {
+      return `uint8array:${bytesToHex(value)}`;
+    }
+    if (value instanceof Date) {
+      if (Number.isNaN(value.getTime())) throw new Error('Invalid Date cannot be proof-canonicalized');
+      return `date:${value.toISOString()}`;
+    }
+    if (Array.isArray(value)) {
+      return `array:[${value.map((item) => canonicalize(item, seen)).join(',')}]`;
+    }
+
+    const proto = Object.getPrototypeOf(value);
+    if (proto !== Object.prototype && proto !== null) {
+      throw new Error('Only plain objects are supported in proof values');
+    }
+
+    const record = value as Record<string, unknown>;
+    return `object:{${Object.keys(record)
+      .sort()
+      .map((key) => `${JSON.stringify(key)}:${canonicalize(record[key], seen)}`)
+      .join(',')}}`;
+  } finally {
+    seen.delete(object);
+  }
 }
 
 function hashObject(value: unknown): string {
@@ -41,6 +81,9 @@ export class SolanaAiOrchestrator {
 
   constructor(keyPair?: PqcKeyPair) {
     this.agentKeyPair = keyPair || generatePqcKeyPair('ML-DSA-65');
+    if (this.agentKeyPair.algorithm !== 'ML-DSA-65') {
+      throw new Error('Agent proof signing requires an ML-DSA-65 key pair');
+    }
   }
 
   public getAgentPublicKey(): string {
@@ -63,22 +106,16 @@ export class SolanaAiOrchestrator {
     input?: unknown
   ): Promise<SolanaAiAgentTask> {
     const executionTimestamp = new Date().toISOString();
-    const taskId = `task_${hashObject({ agentName, action, input, executionTimestamp }).slice(0, 24)}`;
-    const handler = this.actions.get(action);
-
-    if (!handler) {
-      return {
-        taskId,
-        agentName,
-        action,
-        input,
-        error: `Unregistered action: ${action}`,
-        status: 'FAIL_CLOSED',
-        executionTimestamp,
-      };
-    }
+    const fallbackTaskId = `task_${hashObject({ agentName, action, executionTimestamp }).slice(0, 24)}`;
+    let taskId = fallbackTaskId;
 
     try {
+      const inputHash = hashObject(input);
+      taskId = `task_${hashObject({ agentName, action, inputHash, executionTimestamp }).slice(0, 24)}`;
+
+      const handler = this.actions.get(action);
+      if (!handler) throw new Error(`Unregistered action: ${action}`);
+
       const result = await handler(input);
       const proofSubject = hashObject({
         taskId,
@@ -118,24 +155,28 @@ export class SolanaAiOrchestrator {
   public verifyTaskProof(task: SolanaAiAgentTask): boolean {
     if (task.status !== 'COMPLETED' || !task.pqcSignature || !task.proofSubject) return false;
 
-    const expectedSubject = hashObject({
-      taskId: task.taskId,
-      agentName: task.agentName,
-      action: task.action,
-      input: task.input,
-      result: task.result,
-      status: task.status,
-      executionTimestamp: task.executionTimestamp,
-    });
+    try {
+      const expectedSubject = hashObject({
+        taskId: task.taskId,
+        agentName: task.agentName,
+        action: task.action,
+        input: task.input,
+        result: task.result,
+        status: task.status,
+        executionTimestamp: task.executionTimestamp,
+      });
 
-    if (expectedSubject !== task.proofSubject) return false;
+      if (expectedSubject !== task.proofSubject) return false;
 
-    return verifyPqcSignature(
-      task.pqcSignature,
-      task.proofSubject,
-      this.agentKeyPair.publicKey,
-      0,
-      task.agentName
-    ).valid;
+      return verifyPqcSignature(
+        task.pqcSignature,
+        task.proofSubject,
+        this.agentKeyPair.publicKey,
+        0,
+        task.agentName
+      ).valid;
+    } catch {
+      return false;
+    }
   }
 }
