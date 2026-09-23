@@ -28,7 +28,7 @@ Open **Actions → Token-2022 Testnet Launchpad → Run workflow** and provide:
 - initial supply;
 - a public HTTPS metadata JSON URI.
 
-The workflow creates a real Token-2022 mint, initializes metadata, creates the authority's token account, mints the requested initial amount, reads the resulting supply, and publishes an evidence artifact plus a Solana Explorer link.
+The workflow creates a real Token-2022 mint, initializes metadata, creates the authority's token account, mints the requested initial amount, reads the resulting supply, and publishes the transaction signature for every state-changing step plus a JSON evidence artifact and Solana Explorer links.
 
 ## Authority safety
 
