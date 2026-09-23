@@ -225,9 +225,35 @@ jobs:
       - name: Verify deployed program
         if: steps.request.outputs.requested == 'true' && steps.credentials.outputs.available == 'true'
         shell: bash
+        env:
+          PROGRAM_ID: ${{ steps.signer.outputs.program_id }}
+          DEPLOYER_KEYPAIR: ${{ steps.signer.outputs.deployer }}
         run: |
           set -euo pipefail
-          solana program show "${{ steps.signer.outputs.program_id }}" --url "$TESTNET_RPC"
+
+          # CLI verification using the explicit user-controlled signer so the
+          # runner never depends on a default ~/.config/solana/id.json.
+          solana --keypair "$DEPLOYER_KEYPAIR" program show "$PROGRAM_ID" --url "$TESTNET_RPC"
+
+          # Independent read-only JSON-RPC verification. This must prove the
+          # Program account exists and is executable on Testnet.
+          RPC_RESPONSE="$(curl --fail --silent --show-error "$TESTNET_RPC" \
+            -H 'Content-Type: application/json' \
+            --data "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getAccountInfo\",\"params\":[\"$PROGRAM_ID\",{\"encoding\":\"base64\",\"commitment\":\"confirmed\"}]}")"
+          EXECUTABLE="$(jq -r '.result.value.executable // false' <<<"$RPC_RESPONSE")"
+          OWNER="$(jq -r '.result.value.owner // empty' <<<"$RPC_RESPONSE")"
+          if [[ "$EXECUTABLE" != "true" || -z "$OWNER" ]]; then
+            echo "Program account is not independently verified as executable on Testnet." >&2
+            echo "$RPC_RESPONSE" >&2
+            exit 1
+          fi
+
+          {
+            printf '%s\n' '### Independent on-chain verification'
+            printf '%s\n' "- Program ID: $PROGRAM_ID"
+            printf '%s\n' "- Executable: $EXECUTABLE"
+            printf '%s\n' "- Owner/loader: $OWNER"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Write deployment evidence
         if: steps.request.outputs.requested == 'true' && steps.credentials.outputs.available == 'true'
