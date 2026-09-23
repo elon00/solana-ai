@@ -62,7 +62,7 @@ test('NIST TIER 5: NIST FIPS 204 ML-DSA-65 Wire Invariants', () => {
 test('NIST TIER 6: NIST FIPS 204 ML-DSA-65 Signing & Verification', () => {
   const keyPair = generatePqcKeyPair('ML-DSA-65');
   const sig = createPqcHybridSignature('TX_ALGORAND_TEST_001', keyPair, 0.005, 'srv-quantum-ai');
-  assert.ok(sig.hybridSignature.startsWith('PQC-HYBRID-x402.'));
+  assert.ok(sig.hybridSignature.startsWith('PQC-MLDSA65-v1.'));
   assert.equal(sig.mlDsaComponent.length / 2, 3309, 'ML-DSA-65 signature must be 3,309 bytes');
 
   const ver = verifyPqcSignature(sig.hybridSignature, 'TX_ALGORAND_TEST_001', keyPair.publicKey, 0.005, 'srv-quantum-ai');
@@ -73,9 +73,17 @@ test('NIST TIER 7: Repository-defined Adversarial Negative Tests', () => {
   const keyPair = generatePqcKeyPair('ML-DSA-65');
   const sig = createPqcHybridSignature('TX_ALGORAND_TEST_002', keyPair, 0.005, 'srv-quantum-ai');
 
-  // Corrupt signature
-  const badSig = sig.hybridSignature.replace('PQC-HYBRID-x402.', 'CORRUPTED.');
-  const verBad = verifyPqcSignature(badSig, 'TX_ALGORAND_TEST_002', keyPair.publicKey);
+  const envelopePrefix = 'PQC-MLDSA65-v1.';
+  const raw = sig.hybridSignature.slice(envelopePrefix.length);
+  const flippedNibble = raw[0] === '0' ? '1' : '0';
+  const badSig = envelopePrefix + flippedNibble + raw.slice(1);
+  const verBad = verifyPqcSignature(
+    badSig,
+    'TX_ALGORAND_TEST_002',
+    keyPair.publicKey,
+    0.005,
+    'srv-quantum-ai'
+  );
   assert.equal(verBad.valid, false);
 });
 
