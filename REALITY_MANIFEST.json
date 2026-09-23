@@ -1,29 +1,61 @@
 {
   "protocol": "solana-ai",
   "system": "SOLANA-AI-PLATFORM",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "standard": "UNIVERSAL_REALITY_SYSTEM_v1.0",
   "law": "URS_10 = min(E, I, O, V, R, C, P, F, A, H) * 10",
   "criticalFailureRule": "Any Critical Failure = 0 => Feature Cannot Be Called Production-Ready",
   "status": "RESEARCH_PROTOTYPE",
-  "subsystems": [
+  "productionReady": false,
+  "network": {
+    "sbfBuildVerified": true,
+    "testnetDeploymentVerified": false,
+    "mainnetDeploymentVerified": false,
+    "note": "A passing cargo build-sbf proves deployable bytecode only. On-chain deployment requires a successful signed deployment transaction."
+  },
+  "features": [
     {
-      "name": "SOLANA_AI_ORCHESTRATOR",
-      "description": "Autonomous AI agent task execution with post-quantum dual-hybrid authorization",
-      "status": "INTERNAL_VERIFICATION_ONLY",
-      "realityScore": 1
+      "name": "AI_AGENT_ACTION_RUNTIME",
+      "status": "INTERNAL_VERIFIED",
+      "evidence": "Registered actions are actually invoked; unknown actions fail closed; successful receipts receive ML-DSA-65 signatures."
     },
     {
-      "name": "PQC_LATTICE_CORE",
-      "description": "Pure TypeScript NIST FIPS 203 ML-KEM-768 and NIST FIPS 204 ML-DSA-65 cryptographic engine",
-      "status": "INTERNAL_VERIFICATION_ONLY",
-      "realityScore": 1
+      "name": "PQC_ML_DSA_65_AND_ML_KEM_768",
+      "status": "INTERNAL_VERIFIED",
+      "evidence": "Full ML-DSA-65 signature bytes are verified and tamper-rejected; ML-KEM-768 wire invariants and rejection behavior are tested."
     },
     {
-      "name": "SOLANA_ON_CHAIN_PROGRAM",
-      "description": "Rust Solana on-chain program for AI token minting and post-quantum account custody",
-      "status": "INTERNAL_VERIFICATION_ONLY",
-      "realityScore": 1
+      "name": "MULTI_WALLET_BROWSER_CONNECTOR",
+      "status": "IMPLEMENTED_NOT_EXTERNALLY_VERIFIED",
+      "evidence": "Runtime connector supports Phantom, Solflare, and Backpack providers with concurrent connections."
+    },
+    {
+      "name": "AUTOMATION_ENGINE",
+      "status": "INTERNAL_VERIFIED",
+      "evidence": "Registered recurring jobs execute only when due and maintain run state."
+    },
+    {
+      "name": "CONWAY_CELLULAR_AUTOMATON",
+      "status": "INTERNAL_VERIFIED",
+      "evidence": "Deterministic Conway Game of Life engine includes oscillator tests."
+    },
+    {
+      "name": "SAIC_UNCAPPED_SUPPLY_LEDGER",
+      "status": "SBF_BUILD_VERIFIED_NOT_DEPLOYED",
+      "evidence": "Native Solana program stores authority-controlled minted supply with no configured cap, pause control, checked arithmetic, and fail-closed authority checks.",
+      "limitation": "This is an on-chain supply ledger, not an SPL Token mint."
+    },
+    {
+      "name": "LAUNCHPAD_CORE",
+      "status": "APPLICATION_AND_PROGRAM_STATE_IMPLEMENTED_NOT_DEPLOYED",
+      "evidence": "Validated launch registry plus authority-controlled Solana launch state exist.",
+      "limitation": "No claim of a production token sale, liquidity pool, or SPL mint until those on-chain integrations are implemented and deployed."
+    },
+    {
+      "name": "WEB4_LABEL",
+      "status": "DESCRIPTIVE_ONLY",
+      "evidence": "Concrete capabilities include wallet connectivity, agent execution, automation, PQC, cellular automata, and Solana SBF program code.",
+      "limitation": "Web 4.0 is not treated as a formal Solana protocol or certification."
     }
   ],
   "verificationGates": {
@@ -38,12 +70,11 @@
     "A_AdversarialSecurity": 1,
     "H_HumanExternalAudit": 0
   },
-  "automatedInternalScore": 10,
   "weakestLinkScore": 0,
   "weakestLinkDimension": "V/H (Independent verification and human/external audit pending)",
-  "productionReady": false,
   "notes": [
     "Internal automated tests are engineering evidence, not independent production certification.",
-    "Production readiness requires independent security review and verified deployment/operational evidence."
+    "Testnet deployment is not claimed until a Program ID and deployment transaction signature are produced and independently queryable.",
+    "No fake wallet, transaction, deployment, user, liquidity, revenue, or adoption evidence is permitted."
   ]
 }
