@@ -4,7 +4,8 @@
 
 - GitHub: https://github.com/elon00/solana-ai
 - Solana Testnet Program: https://explorer.solana.com/address/Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3?cluster=testnet
-- Latest verified deployment transaction will be recorded by the one-click Testnet deployment workflow.
+- Testnet deployment transaction: https://explorer.solana.com/tx/5DKkhtQWdPBZvxUokeoDYnhKuCXEtM2UMa2pgFdCgJyS9VLTTVz9MPCqc368gHMvvBLqtwsy2nbVQJF9dqGqgxDN?cluster=testnet
+- Deployment workflow evidence: https://github.com/elon00/solana-ai/actions/runs/35848403836
 
 Solana-focused blockchain and AI research project with post-quantum cryptography experiments, Rust/Solana program work, and reproducible cryptographic verification scripts.
 
@@ -22,7 +23,7 @@ The repository contains working cryptographic test code and a Solana program imp
 - deterministic Conway Game of Life engine with reproducible state hashing
 - non-custodial injected multi-wallet manager for Phantom, Solflare, Backpack, Brave and Coinbase-compatible providers
 - Rust/Solana authority-bound proof-registry program
-- real `cargo build-sbf` verification in the Testnet deployment workflow
+- real `cargo build-sbf` verification and successful Solana Testnet deployment with independently verified executable Program account
 - guarded Token-2022 Testnet launchpad workflow with metadata and uncapped mint-authority supply policy
 - repository CI, RustSec and CodeQL security gates
 
@@ -86,7 +87,7 @@ The launchpad supports **uncapped issuance while mint authority remains active**
 
 ### Testnet deployment
 
-See [TESTNET_DEPLOYMENT.md](TESTNET_DEPLOYMENT.md). A live deployment is only claimed after a successful signed workflow records a Program ID and transaction signature.
+See [TESTNET_DEPLOYMENT.md](TESTNET_DEPLOYMENT.md). The current live Testnet Program ID is `Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3`, with deployment transaction `5DKkhtQWdPBZvxUokeoDYnhKuCXEtM2UMa2pgFdCgJyS9VLTTVz9MPCqc368gHMvvBLqtwsy2nbVQJF9dqGqgxDN`.
 
 ## Colosseum Copilot and hackathon readiness
 
