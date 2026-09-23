@@ -87,9 +87,9 @@ test('NIST TIER 7: Repository-defined Adversarial Negative Tests', () => {
   assert.equal(verBad.valid, false);
 });
 
-test('NIST TIER 8: x402 Dual Hybrid Payment Conjunction', () => {
+test('NIST TIER 8: Full ML-DSA Authorization Envelope', () => {
   const keyPair = generatePqcKeyPair('ML-DSA-65');
   const sig = createPqcHybridSignature('RQSQ6LBTNQEGROLRSKRCJPLVLUD6JOGAVY3QUTDDYGYBBHGAKDSA', keyPair, 0.005, 'srv-shor-orchestrator');
   assert.equal(sig.quantumResistanceScore, 1.0);
-  assert.ok(sig.verificationProof.includes('NIST_FIPS_204_ML_DSA_65_AUTHENTICATED'));
+  assert.ok(sig.verificationProof.includes('NIST_FIPS_204_ML_DSA_65_VERIFIED'));
 });
