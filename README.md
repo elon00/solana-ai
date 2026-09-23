@@ -44,6 +44,31 @@ A passing test demonstrates the behavior covered by that test only. It does not 
 - `scripts/` — audit and evidence-generation tooling
 - `REALITY_MANIFEST.json` — internal project status/scorecard; not an external certification
 
+## Colosseum Copilot and hackathon readiness
+
+This repository includes a safe one-click helper for Colosseum Copilot plus a current submission-readiness checklist.
+
+1. Set your Colosseum environment variables without committing the token:
+
+```bash
+export COLOSSEUM_COPILOT_API_BASE="https://copilot.colosseum.com/api/v1"
+export COLOSSEUM_COPILOT_PAT="YOUR_PAT"
+```
+
+2. Install the skill for Codex, Claude Code, and OpenClaw and verify authentication:
+
+```bash
+npm run colosseum:setup
+```
+
+3. Re-check the repository-side requirements:
+
+```bash
+npm run colosseum:check
+```
+
+See [COLOSSEUM_READINESS.md](COLOSSEUM_READINESS.md) for the live Crypto World's Fair checklist, the human/external steps that cannot be completed by CI, and the judging-alignment notes.
+
 ## Production-readiness requirements
 
 Before production use, this project still needs deployment-specific threat modeling, independent security review, secrets/key-management design, observability, incident response, backup/recovery procedures, load testing, release controls, and verified deployment evidence.
