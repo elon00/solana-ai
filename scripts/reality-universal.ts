@@ -6,7 +6,7 @@
  * Gate 3: NIST FIPS 204 ML-DSA-65 Keygen & Wire Invariants
  * Gate 4: Solana AI Agent Orchestrator & Execution Proof
  * Gate 5: Pure-TS ML-DSA-65 Signing & Tamper Rejection
- * Gate 6: Dual Hybrid Post-Quantum Defense Conjunction
+ * Gate 6: Post-Quantum Authorization Conjunction
  * Gate 7: NIST FIPS 203 ML-KEM-768 & §7.3 Implicit Rejection
  * Gate 8: Rust Solana Program Source Code Conformance
  * Gate 9: Reproducibility & Known Answer Tests (KAT)
@@ -207,13 +207,13 @@ try {
 }
 
 // -----------------------------------------------------------------------------
-// GATE 6: Dual Hybrid Post-Quantum Defense Conjunction
+// GATE 6: Post-Quantum Authorization Conjunction
 // -----------------------------------------------------------------------------
 try {
   const keyPair = generatePqcKeyPair('ML-DSA-65');
   const sigResult = createPqcHybridSignature('SOLANA_AGENT_SETTLEMENT', keyPair, 0.1, 'solana-agent-pqc');
   assert.strictEqual(sigResult.quantumResistanceScore, 1.0);
-  assert.ok(sigResult.verificationProof.includes('NIST_FIPS_204_ML_DSA_65_AUTHENTICATED'));
+  assert.ok(sigResult.verificationProof.includes('NIST_FIPS_204_ML_DSA_65_VERIFIED'));
 
   gates.push({
     gate: 6,
