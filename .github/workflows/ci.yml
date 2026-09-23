@@ -30,6 +30,8 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: PQC and repository tests
         run: npm test
+      - name: Colosseum repository readiness
+        run: npm run colosseum:check
       - name: Production dependency audit
         run: npm audit --omit=dev --audit-level=high
       - name: Rust format
