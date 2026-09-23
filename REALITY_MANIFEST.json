@@ -21,8 +21,8 @@
     },
     {
       "name": "SOLANA_ON_CHAIN_PROOF_REGISTRY",
-      "description": "Rust Solana program for authority-bound 32-byte agent/PQC commitments",
-      "status": "SBF_BUILD_VERIFIED_NOT_YET_ON_CHAIN_VERIFIED",
+      "description": "Rust Solana program for authority-bound 32-byte agent/PQC commitments; deployed and independently queried as executable on Solana Testnet.",
+      "status": "SOLANA_TESTNET_ON_CHAIN_VERIFIED",
       "realityScore": 1
     },
     {
@@ -45,8 +45,8 @@
     },
     {
       "name": "SOLANA_TESTNET_DEPLOYMENT",
-      "description": "SBF build-verified deployment workflow that requires user-controlled Testnet signer secrets",
-      "status": "WORKFLOW_READY_EXTERNAL_EXECUTION_REQUIRED",
+      "description": "Successful signed Solana Testnet deployment with Program ID, transaction signature, SBF SHA-256, explicit upgrade authority, JSON-RPC verification, and retained workflow evidence.",
+      "status": "SOLANA_TESTNET_ON_CHAIN_VERIFIED",
       "realityScore": 1
     }
   ],
@@ -67,9 +67,22 @@
   "weakestLinkDimension": "V/H (Independent verification and human/external audit pending)",
   "productionReady": false,
   "notes": [
+    "Solana Testnet deployment is independently evidenced by a successful signed workflow, executable Program account verification, Program ID, transaction signature, and retained evidence artifact.",
     "Internal tests and workflow builds are engineering evidence, not independent production certification.",
-    "On-chain deployment is not claimed until a real Program ID and transaction signature are captured.",
     "Token launch is not claimed until a real Testnet mint address and launch transaction evidence exist.",
     "Private keys remain user-controlled and are never committed by the repository."
-  ]
+  ],
+  "testnetDeployment": {
+    "network": "solana-testnet",
+    "rpc": "https://api.testnet.solana.com",
+    "programId": "Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3",
+    "programDataAddress": "DhJKKEatbJZCRavF3hiSUGWfLP1K43adh2LLCkGR8CLn",
+    "upgradeAuthority": "8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es",
+    "deploymentSignature": "5DKkhtQWdPBZvxUokeoDYnhKuCXEtM2UMa2pgFdCgJyS9VLTTVz9MPCqc368gHMvvBLqtwsy2nbVQJF9dqGqgxDN",
+    "sbfSha256": "10692ba989aba95df0de26f5268eded6bbddc5d4c4c21ba3be9baeb5891d71f3",
+    "sourceCommit": "16bceedd561effdaa4fcefc2be81aaf8273cda1a",
+    "workflowRunId": 35848403836,
+    "executableVerified": true,
+    "evidenceArtifact": "solana-ai-testnet-deployment-evidence"
+  }
 }
