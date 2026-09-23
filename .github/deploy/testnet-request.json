@@ -1,10 +1,10 @@
 {
   "action": "deploy",
   "network": "solana-testnet",
-  "expectedDeployer": "ETMPB8Kha7UJDnqBX93MFBhKCe9Q8v5YZJdugsoJfVCV",
-  "expectedProgramId": "G8psSQ47tMQX1zh9STk24NtmNrwzB43uHBbrXaWHMBxk",
-  "requestedFromMain": "039e2cf2a90ea74d1e94af31535598838cd3b353",
-  "reason": "User explicitly authorized full Solana Testnet deployment.",
+  "expectedDeployer": "8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es",
+  "expectedProgramId": "Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3",
+  "requestedFromMain": "a75a8d6a88021c97b976e0a27b34891dba4cb0d6",
+  "reason": "User explicitly requested novice-friendly one-click Solana Testnet redeployment with a fresh transaction signature and verifiable evidence.",
   "failClosed": true,
-  "retryReason": "Retry after replacing shallow-clone diff detection with immutable push-before binding."
+  "retryReason": "Redeploy after fixing explicit-signer and JSON-RPC post-deployment verification."
 }
