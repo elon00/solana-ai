@@ -125,9 +125,16 @@ export function createPqcHybridSignature(
   verificationProof: string;
   quantumResistanceScore: number;
 } {
+  if (keyPair.algorithm !== 'ML-DSA-65') {
+    throw new Error('ML-DSA-65 signing requires an ML-DSA-65 key pair');
+  }
+
   const stored = activeKeyStorage.get(keyPair.keyId);
   if (!stored) {
     throw new Error('ML-DSA signing key is not available in this runtime');
+  }
+  if (bytesToHex(stored.publicKey) !== keyPair.publicKey) {
+    throw new Error('Stored ML-DSA key does not match the supplied public key');
   }
 
   const payload = `tx:${subject}|amt:${amount}|srv:${serviceId}|pub:${keyPair.publicKey.substring(0, 32)}`;
