@@ -1,59 +1,42 @@
 # Solana Testnet Deployment
 
-Status: **AUTOMATED DEPLOYMENT PATH READY; ON-CHAIN DEPLOYMENT REQUIRES USER-CONTROLLED SIGNERS**
+Status: **LIVE ON SOLANA TESTNET — VERIFIED**
 
-Solana Testnet RPC:
+## Current live deployment
 
-```text
-https://api.testnet.solana.com
-```
+- **RPC:** `https://api.testnet.solana.com`
+- **Program ID:** `Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3`
+- **ProgramData address:** `DhJKKEatbJZCRavF3hiSUGWfLP1K43adh2LLCkGR8CLn`
+- **Upgrade authority:** `8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es`
+- **Latest deployment transaction:** `5DKkhtQWdPBZvxUokeoDYnhKuCXEtM2UMa2pgFdCgJyS9VLTTVz9MPCqc368gHMvvBLqtwsy2nbVQJF9dqGqgxDN`
+- **SBF SHA-256:** `10692ba989aba95df0de26f5268eded6bbddc5d4c4c21ba3be9baeb5891d71f3`
+- **Source commit deployed:** `16bceedd561effdaa4fcefc2be81aaf8273cda1a`
+- **Successful deployment workflow:** `35848403836`
 
-The repository workflow `.github/workflows/solana-testnet-deploy.yml` performs a real Solana SBF build on pull requests and main-branch changes. A manual workflow dispatch with `deploy=true` performs the on-chain deployment when the required GitHub Actions secrets exist.
+Explorer:
 
-## Required one-time signer setup
+- Program: https://explorer.solana.com/address/Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3?cluster=testnet
+- Transaction: https://explorer.solana.com/tx/5DKkhtQWdPBZvxUokeoDYnhKuCXEtM2UMa2pgFdCgJyS9VLTTVz9MPCqc368gHMvvBLqtwsy2nbVQJF9dqGqgxDN?cluster=testnet
+- Workflow evidence: https://github.com/elon00/solana-ai/actions/runs/35848403836
 
-Do **not** paste private keys into issues, commits, PRs, or chat messages.
+The successful workflow performed a real `cargo build-sbf`, signed deployment, explicit-signer `solana program show`, independent JSON-RPC executable-account verification, and uploaded a `solana-ai-testnet-deployment-evidence` artifact.
 
-Generate two dedicated Testnet-only keypairs locally:
+## One-click redeployment
 
-```bash
-solana-keygen new --outfile solana-testnet-deployer.json
-solana-keygen new --outfile solana-testnet-program.json
-```
+Repository secrets already supply the user-controlled Testnet deployer and program keypairs. For a manual redeploy:
 
-Display the public addresses:
+1. Open **Actions**.
+2. Select **Solana Testnet Deployment**.
+3. Click **Run workflow**.
+4. Set **deploy = true**.
+5. Click **Run workflow**.
 
-```bash
-solana-keygen pubkey solana-testnet-deployer.json
-solana-keygen pubkey solana-testnet-program.json
-```
+A successful run produces a fresh transaction signature while retaining the same Program ID because the same program keypair is used.
 
-Add the full JSON-array contents of the files as GitHub Actions repository secrets:
+## Security boundary
 
-- `SOLANA_TESTNET_DEPLOYER_KEYPAIR`
-- `SOLANA_TESTNET_PROGRAM_KEYPAIR`
+Never put private keys, seed phrases, or keypair JSON in README files, issues, commits, pull requests, or chat. The workflow reads the keypairs only from encrypted GitHub Actions secrets.
 
-The program keypair fixes the Program ID across redeployments. The deployer keypair remains the upgrade authority.
+## Evidence rule
 
-Optionally set repository variable `SOLANA_TESTNET_RPC` to a trusted Testnet RPC. If absent, the workflow uses the official public RPC.
-
-## Fund the Testnet deployer
-
-The workflow attempts a Testnet airdrop before deployment. Airdrops can be rate-limited, so you may need to fund the deployer address separately with Testnet SOL.
-
-## Deploy
-
-Open **Actions → Solana Testnet Deployment → Run workflow**, set `deploy=true`, and run it.
-
-The workflow will:
-
-1. install the pinned Solana/Agave CLI;
-2. run `cargo build-sbf`;
-3. hash the SBF artifact;
-4. validate the signer and Program ID;
-5. attempt a Testnet airdrop;
-6. deploy with `solana program deploy`;
-7. verify the deployed program;
-8. publish the Program ID, deployment transaction signature, SBF SHA-256, Explorer links, and a JSON evidence artifact.
-
-A green ordinary CI run is not proof of deployment. Only a successful deployment workflow containing an on-chain Program ID and transaction signature is deployment evidence.
+A source-code hash alone is not deployment proof. Deployment is considered verified only when the workflow records the on-chain Program ID, signed transaction signature, SBF hash, and successful independent Testnet account verification.
