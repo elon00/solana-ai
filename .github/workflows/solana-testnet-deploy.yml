@@ -1,0 +1,199 @@
+name: Solana Testnet Deployment
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "program/**"
+      - ".github/workflows/solana-testnet-deploy.yml"
+      - "TESTNET_DEPLOYMENT.md"
+  push:
+    branches: [main]
+    paths:
+      - "program/**"
+      - ".github/workflows/solana-testnet-deploy.yml"
+      - "TESTNET_DEPLOYMENT.md"
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Deploy the verified SBF artifact to Solana Testnet"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+env:
+  SOLANA_CLI_VERSION: "v4.2.1"
+  TESTNET_RPC: ${{ vars.SOLANA_TESTNET_RPC || 'https://api.testnet.solana.com' }}
+
+jobs:
+  build-and-optionally-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Install Solana CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          sh -c "$(curl --proto '=https' --tlsv1.2 -sSfL "https://release.anza.xyz/${SOLANA_CLI_VERSION}/install")"
+          echo "$HOME/.local/share/solana/install/active_release/bin" >> "$GITHUB_PATH"
+
+      - name: Verify toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          solana --version
+          cargo build-sbf --version
+
+      - name: Build SBF program
+        id: build
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo build-sbf --manifest-path program/Cargo.toml
+          SO_PATH="$(find program/target/deploy -maxdepth 1 -type f -name '*.so' -print -quit)"
+          if [[ -z "$SO_PATH" ]]; then
+            echo "No SBF .so artifact was produced." >&2
+            exit 1
+          fi
+          SHA256="$(sha256sum "$SO_PATH" | awk '{print $1}')"
+          echo "so_path=$SO_PATH" >> "$GITHUB_OUTPUT"
+          echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Solana SBF build"
+            echo "- Artifact: `$SO_PATH`"
+            echo "- SHA-256: `$SHA256`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload SBF artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: solana-ai-testnet-sbf
+          path: ${{ steps.build.outputs.so_path }}
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Check deployment credentials
+        id: credentials
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true
+        shell: bash
+        env:
+          DEPLOYER_KEYPAIR_JSON: ${{ secrets.SOLANA_TESTNET_DEPLOYER_KEYPAIR }}
+          PROGRAM_KEYPAIR_JSON: ${{ secrets.SOLANA_TESTNET_PROGRAM_KEYPAIR }}
+        run: |
+          set -euo pipefail
+          if [[ -n "$DEPLOYER_KEYPAIR_JSON" && -n "$PROGRAM_KEYPAIR_JSON" ]]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "### Testnet deployment blocked"
+              echo "SBF build passed, but deployment secrets are missing."
+              echo "Required repository secrets:"
+              echo "- `SOLANA_TESTNET_DEPLOYER_KEYPAIR`"
+              echo "- `SOLANA_TESTNET_PROGRAM_KEYPAIR`"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Materialize signer keypairs
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && steps.credentials.outputs.available == 'true'
+        id: signer
+        shell: bash
+        env:
+          DEPLOYER_KEYPAIR_JSON: ${{ secrets.SOLANA_TESTNET_DEPLOYER_KEYPAIR }}
+          PROGRAM_KEYPAIR_JSON: ${{ secrets.SOLANA_TESTNET_PROGRAM_KEYPAIR }}
+        run: |
+          set -euo pipefail
+          umask 077
+          DEPLOYER="$RUNNER_TEMP/solana-testnet-deployer.json"
+          PROGRAM="$RUNNER_TEMP/solana-testnet-program.json"
+          printf '%s' "$DEPLOYER_KEYPAIR_JSON" > "$DEPLOYER"
+          printf '%s' "$PROGRAM_KEYPAIR_JSON" > "$PROGRAM"
+          DEPLOYER_ADDRESS="$(solana-keygen pubkey "$DEPLOYER")"
+          PROGRAM_ID="$(solana-keygen pubkey "$PROGRAM")"
+          echo "deployer=$DEPLOYER" >> "$GITHUB_OUTPUT"
+          echo "program=$PROGRAM" >> "$GITHUB_OUTPUT"
+          echo "deployer_address=$DEPLOYER_ADDRESS" >> "$GITHUB_OUTPUT"
+          echo "program_id=$PROGRAM_ID" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Testnet signer"
+            echo "- Authority: `$DEPLOYER_ADDRESS`"
+            echo "- Program ID: `$PROGRAM_ID`"
+            echo "- RPC: `$TESTNET_RPC`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fund Testnet authority if possible
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && steps.credentials.outputs.available == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          solana balance --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}"
+          solana airdrop 2 --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}" || true
+          solana balance --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}"
+
+      - name: Deploy to Solana Testnet
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && steps.credentials.outputs.available == 'true'
+        id: deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOG="$RUNNER_TEMP/solana-testnet-deploy.log"
+          solana program deploy "${{ steps.build.outputs.so_path }}"             --program-id "${{ steps.signer.outputs.program }}"             --keypair "${{ steps.signer.outputs.deployer }}"             --url "$TESTNET_RPC"             --commitment confirmed | tee "$LOG"
+
+          SIGNATURE="$(awk -F': ' '/^Signature:/ {print $2}' "$LOG" | tail -1)"
+          if [[ -z "$SIGNATURE" ]]; then
+            echo "Deployment completed without a parseable transaction signature." >&2
+            exit 1
+          fi
+
+          echo "signature=$SIGNATURE" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Solana Testnet deployment"
+            echo "- Program ID: `${{ steps.signer.outputs.program_id }}`"
+            echo "- Authority: `${{ steps.signer.outputs.deployer_address }}`"
+            echo "- Transaction: `$SIGNATURE`"
+            echo "- SBF SHA-256: `${{ steps.build.outputs.sha256 }}`"
+            echo "- Program Explorer: https://explorer.solana.com/address/${{ steps.signer.outputs.program_id }}?cluster=testnet"
+            echo "- Transaction Explorer: https://explorer.solana.com/tx/$SIGNATURE?cluster=testnet"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verify deployed program
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && steps.credentials.outputs.available == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          solana program show "${{ steps.signer.outputs.program_id }}" --url "$TESTNET_RPC"
+
+      - name: Write deployment evidence
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && steps.credentials.outputs.available == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/testnet-deployment.json" <<JSON
+          {
+            "network": "solana-testnet",
+            "rpc": "$TESTNET_RPC",
+            "programId": "${{ steps.signer.outputs.program_id }}",
+            "upgradeAuthority": "${{ steps.signer.outputs.deployer_address }}",
+            "deploymentSignature": "${{ steps.deploy.outputs.signature }}",
+            "sbfSha256": "${{ steps.build.outputs.sha256 }}",
+            "sourceCommit": "$GITHUB_SHA",
+            "deployedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          JSON
+
+      - name: Upload deployment evidence
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && steps.credentials.outputs.available == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: solana-ai-testnet-deployment-evidence
+          path: ${{ runner.temp }}/testnet-deployment.json
+          if-no-files-found: error
+          retention-days: 30
