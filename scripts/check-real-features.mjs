@@ -35,6 +35,8 @@ assert.ok(!program.includes('try_borrow_mut_lamports'), 'Lamport mutation cannot
 const launchpad = fs.readFileSync('.github/workflows/token-launchpad-testnet.yml', 'utf8');
 assert.ok(launchpad.includes('--program-2022'), 'Launchpad must use Token-2022');
 assert.ok(launchpad.includes('UNCAPPED_WHILE_MINT_AUTHORITY_REMAINS_ACTIVE'), 'Supply policy must be explicit');
+assert.ok(launchpad.includes('transactionSignatures'), 'Launch evidence must include transaction signatures');
+assert.ok(launchpad.includes('Initial-issuance transaction signature missing'), 'Launchpad must fail closed if issuance evidence is missing');
 
 const deployment = fs.readFileSync('.github/workflows/solana-testnet-deploy.yml', 'utf8');
 assert.ok(deployment.includes('cargo build-sbf'), 'Deployment must build a real SBF artifact');
