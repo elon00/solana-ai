@@ -1,5 +1,11 @@
 # Solana AI
 
+## Project links
+
+- GitHub: https://github.com/elon00/solana-ai
+- Solana Testnet Program: https://explorer.solana.com/address/Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3?cluster=testnet
+- Latest verified deployment transaction will be recorded by the one-click Testnet deployment workflow.
+
 Solana-focused blockchain and AI research project with post-quantum cryptography experiments, Rust/Solana program work, and reproducible cryptographic verification scripts.
 
 ## Current status
