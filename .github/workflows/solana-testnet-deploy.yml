@@ -13,6 +13,7 @@ on:
       - "program/**"
       - ".github/workflows/solana-testnet-deploy.yml"
       - "TESTNET_DEPLOYMENT.md"
+      - ".github/deploy/testnet-request.json"
   workflow_dispatch:
     inputs:
       deploy:
@@ -80,19 +81,44 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+      - name: Resolve deployment request
+        id: request
+        shell: bash
+        env:
+          MANUAL_DEPLOY: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy == true }}
+        run: |
+          set -euo pipefail
+          REQUESTED=false
+          EXPECTED_DEPLOYER=""
+          EXPECTED_PROGRAM_ID=""
+
+          if [[ "$MANUAL_DEPLOY" == "true" ]]; then
+            REQUESTED=true
+          elif [[ "$GITHUB_EVENT_NAME" == "push" ]] && \
+               git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" | grep -qx '.github/deploy/testnet-request.json'; then
+            ACTION="$(jq -r '.action // empty' .github/deploy/testnet-request.json)"
+            NETWORK="$(jq -r '.network // empty' .github/deploy/testnet-request.json)"
+            if [[ "$ACTION" == "deploy" && "$NETWORK" == "solana-testnet" ]]; then
+              REQUESTED=true
+              EXPECTED_DEPLOYER="$(jq -r '.expectedDeployer // empty' .github/deploy/testnet-request.json)"
+              EXPECTED_PROGRAM_ID="$(jq -r '.expectedProgramId // empty' .github/deploy/testnet-request.json)"
+            fi
+          fi
+
+          echo "requested=$REQUESTED" >> "$GITHUB_OUTPUT"
+          echo "expected_deployer=$EXPECTED_DEPLOYER" >> "$GITHUB_OUTPUT"
+          echo "expected_program_id=$EXPECTED_PROGRAM_ID" >> "$GITHUB_OUTPUT"
+
       - name: Check deployment credentials
         id: credentials
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true
+        if: steps.request.outputs.requested == 'true'
         shell: bash
         env:
           DEPLOYER_KEYPAIR_JSON: ${{ secrets.SOLANA_TESTNET_DEPLOYER_KEYPAIR }}
           PROGRAM_KEYPAIR_JSON: ${{ secrets.SOLANA_TESTNET_PROGRAM_KEYPAIR }}
         run: |
           set -euo pipefail
-          if [[ -n "$DEPLOYER_KEYPAIR_JSON" && -n "$PROGRAM_KEYPAIR_JSON" ]]; then
-            echo "available=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "available=false" >> "$GITHUB_OUTPUT"
+          if [[ -z "$DEPLOYER_KEYPAIR_JSON" || -z "$PROGRAM_KEYPAIR_JSON" ]]; then
             {
               echo "### Testnet deployment blocked"
               echo "SBF build passed, but deployment secrets are missing."
@@ -100,10 +126,12 @@ jobs:
               echo "- `SOLANA_TESTNET_DEPLOYER_KEYPAIR`"
               echo "- `SOLANA_TESTNET_PROGRAM_KEYPAIR`"
             } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
           fi
+          echo "available=true" >> "$GITHUB_OUTPUT"
 
       - name: Materialize signer keypairs
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && steps.credentials.outputs.available == 'true'
+        if: steps.request.outputs.requested == 'true' && steps.credentials.outputs.available == 'true'
         id: signer
         shell: bash
         env:
@@ -118,6 +146,17 @@ jobs:
           printf '%s' "$PROGRAM_KEYPAIR_JSON" > "$PROGRAM"
           DEPLOYER_ADDRESS="$(solana-keygen pubkey "$DEPLOYER")"
           PROGRAM_ID="$(solana-keygen pubkey "$PROGRAM")"
+
+          EXPECTED_DEPLOYER="${{ steps.request.outputs.expected_deployer }}"
+          EXPECTED_PROGRAM_ID="${{ steps.request.outputs.expected_program_id }}"
+          if [[ -n "$EXPECTED_DEPLOYER" && "$DEPLOYER_ADDRESS" != "$EXPECTED_DEPLOYER" ]]; then
+            echo "Configured deployer $DEPLOYER_ADDRESS does not match authorized request $EXPECTED_DEPLOYER" >&2
+            exit 1
+          fi
+          if [[ -n "$EXPECTED_PROGRAM_ID" && "$PROGRAM_ID" != "$EXPECTED_PROGRAM_ID" ]]; then
+            echo "Configured Program ID $PROGRAM_ID does not match authorized request $EXPECTED_PROGRAM_ID" >&2
+            exit 1
+          fi
           echo "deployer=$DEPLOYER" >> "$GITHUB_OUTPUT"
           echo "program=$PROGRAM" >> "$GITHUB_OUTPUT"
           echo "deployer_address=$DEPLOYER_ADDRESS" >> "$GITHUB_OUTPUT"
@@ -130,16 +169,24 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Fund Testnet authority if possible
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && steps.credentials.outputs.available == 'true'
+        if: steps.request.outputs.requested == 'true' && steps.credentials.outputs.available == 'true'
         shell: bash
         run: |
           set -euo pipefail
-          solana balance --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}"
-          solana airdrop 2 --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}" || true
-          solana balance --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}"
+          BEFORE="$(solana balance --lamports --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}")"
+          echo "Authority balance before deploy: $BEFORE lamports"
+          if [[ "$BEFORE" -lt 1000000 ]]; then
+            solana airdrop 2 --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}" || true
+          fi
+          AFTER="$(solana balance --lamports --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}")"
+          echo "Authority balance available: $AFTER lamports"
+          if [[ "$AFTER" -lt 1000000 ]]; then
+            echo "Testnet deployer has insufficient SOL for deployment." >&2
+            exit 1
+          fi
 
       - name: Deploy to Solana Testnet
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && steps.credentials.outputs.available == 'true'
+        if: steps.request.outputs.requested == 'true' && steps.credentials.outputs.available == 'true'
         id: deploy
         shell: bash
         run: |
@@ -165,14 +212,14 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Verify deployed program
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && steps.credentials.outputs.available == 'true'
+        if: steps.request.outputs.requested == 'true' && steps.credentials.outputs.available == 'true'
         shell: bash
         run: |
           set -euo pipefail
           solana program show "${{ steps.signer.outputs.program_id }}" --url "$TESTNET_RPC"
 
       - name: Write deployment evidence
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && steps.credentials.outputs.available == 'true'
+        if: steps.request.outputs.requested == 'true' && steps.credentials.outputs.available == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -190,7 +237,7 @@ jobs:
           JSON
 
       - name: Upload deployment evidence
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && steps.credentials.outputs.available == 'true'
+        if: steps.request.outputs.requested == 'true' && steps.credentials.outputs.available == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: solana-ai-testnet-deployment-evidence
