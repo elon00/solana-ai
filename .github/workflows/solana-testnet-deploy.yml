@@ -137,6 +137,8 @@ jobs:
         env:
           DEPLOYER_KEYPAIR_JSON: ${{ secrets.SOLANA_TESTNET_DEPLOYER_KEYPAIR }}
           PROGRAM_KEYPAIR_JSON: ${{ secrets.SOLANA_TESTNET_PROGRAM_KEYPAIR }}
+          EXPECTED_DEPLOYER: ${{ steps.request.outputs.expected_deployer }}
+          EXPECTED_PROGRAM_ID: ${{ steps.request.outputs.expected_program_id }}
         run: |
           set -euo pipefail
           umask 077
@@ -147,8 +149,6 @@ jobs:
           DEPLOYER_ADDRESS="$(solana-keygen pubkey "$DEPLOYER")"
           PROGRAM_ID="$(solana-keygen pubkey "$PROGRAM")"
 
-          EXPECTED_DEPLOYER="${{ steps.request.outputs.expected_deployer }}"
-          EXPECTED_PROGRAM_ID="${{ steps.request.outputs.expected_program_id }}"
           if [[ -n "$EXPECTED_DEPLOYER" && "$DEPLOYER_ADDRESS" != "$EXPECTED_DEPLOYER" ]]; then
             echo "Configured deployer $DEPLOYER_ADDRESS does not match authorized request $EXPECTED_DEPLOYER" >&2
             exit 1
@@ -173,14 +173,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          BEFORE="$(solana balance --lamports --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}")"
+          BEFORE="$(solana balance --lamports --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}" | awk '{print $1}')"
+          [[ "$BEFORE" =~ ^[0-9]+$ ]] || { echo "Invalid lamport balance: $BEFORE" >&2; exit 1; }
           echo "Authority balance before deploy: $BEFORE lamports"
-          if [[ "$BEFORE" -lt 1000000 ]]; then
+          if (( BEFORE < 1000000 )); then
             solana airdrop 2 --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}" || true
           fi
-          AFTER="$(solana balance --lamports --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}")"
+          AFTER="$(solana balance --lamports --url "$TESTNET_RPC" --keypair "${{ steps.signer.outputs.deployer }}" | awk '{print $1}')"
+          [[ "$AFTER" =~ ^[0-9]+$ ]] || { echo "Invalid lamport balance: $AFTER" >&2; exit 1; }
           echo "Authority balance available: $AFTER lamports"
-          if [[ "$AFTER" -lt 1000000 ]]; then
+          if (( AFTER < 1000000 )); then
             echo "Testnet deployer has insufficient SOL for deployment." >&2
             exit 1
           fi
