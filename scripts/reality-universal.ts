@@ -74,7 +74,12 @@ try {
 try {
   const filesToScan = [
     'src/utils/pqcCrypto.ts',
-    'src/solana_ai.ts'
+    'src/solana_ai.ts',
+    'src/agentics/actionRuntime.ts',
+    'src/automation/engine.ts',
+    'src/game/conway.ts',
+    'src/wallets/multiWallet.ts',
+    'src/launchpad/registry.ts'
   ];
 
   for (const f of filesToScan) {
@@ -129,21 +134,30 @@ try {
 // -----------------------------------------------------------------------------
 try {
   const orchestrator = new SolanaAiOrchestrator();
-  const task = orchestrator.executeTask('SolanaAgentAlpha', 'DEPLOY_LIQUIDITY_PROGRAM_DEVNET');
+  let actionRuns = 0;
+  orchestrator.registerAction('REALITY_HEALTHCHECK', async (input) => {
+    actionRuns += 1;
+    return { output: { ok: true, input }, evidence: { executed: true } };
+  });
+
+  const task = await orchestrator.executeTask('SolanaAgentAlpha', 'REALITY_HEALTHCHECK', { gate: 4 });
   assert.strictEqual(task.status, 'COMPLETED');
+  assert.strictEqual(actionRuns, 1, 'registered action must actually execute');
   assert.ok(task.pqcSignature);
-  const verified = orchestrator.verifyTaskProof(task);
-  assert.strictEqual(verified, true, 'AI agent task proof must verify cryptographically');
+  assert.strictEqual(orchestrator.verifyTaskProof(task), true);
+
+  const blocked = await orchestrator.executeTask('SolanaAgentAlpha', 'UNREGISTERED_ACTION');
+  assert.strictEqual(blocked.status, 'FAIL_CLOSED', 'unknown actions must not be labelled complete');
 
   gates.push({
     gate: 4,
     name: 'Solana AI Agent Orchestrator & Execution Proof',
     passed: true,
     score: 1.0,
-    details: 'Verified autonomous AI agent task execution and ML-DSA-65 cryptographic proof'
+    details: 'Registered action executed exactly once, signed receipt emitted, and unknown action failed closed'
   });
   console.log('▶ [URS GATE 4/10] Solana AI Agent Orchestrator & Execution Proof');
-  console.log('  ✅ Verified autonomous AI agent task execution and ML-DSA-65 cryptographic proof\n');
+  console.log('  ✅ Registered action executed with signed evidence; unknown action failed closed\n');
 } catch (e: any) {
   gates.push({ gate: 4, name: 'Solana AI Agent Orchestrator & Execution Proof', passed: false, score: 0.0, details: e.message });
   console.log(`  ❌ GATE 4 FAILED: ${e.message}\n`);
@@ -155,13 +169,13 @@ try {
 try {
   const keyPair = generatePqcKeyPair('ML-DSA-65');
   const sigResult = createPqcHybridSignature('SOLANA_AI_GATE5', keyPair, 0.01, 'solana-agent');
-  assert.ok(sigResult.hybridSignature.startsWith('PQC-HYBRID-x402.'));
+  assert.ok(sigResult.hybridSignature.startsWith('PQC-MLDSA65.'));
 
   const ver = verifyPqcSignature(sigResult.hybridSignature, 'SOLANA_AI_GATE5', keyPair.publicKey, 0.01, 'solana-agent');
   assert.strictEqual(ver.valid, true, 'Genuine signature must verify');
 
   // Tamper rejection
-  const tamperedSig = sigResult.hybridSignature.replace('PQC-HYBRID-x402.', 'PQC-HYBRID-FORGED.');
+  const tamperedSig = sigResult.hybridSignature.slice(0, -1) + (sigResult.hybridSignature.endsWith('0') ? '1' : '0');
   const verTampered = verifyPqcSignature(tamperedSig, 'SOLANA_AI_GATE5', keyPair.publicKey, 0.01, 'solana-agent');
   assert.strictEqual(verTampered.valid, false, 'Tampered signature must be rejected');
 
@@ -190,13 +204,13 @@ try {
 
   gates.push({
     gate: 6,
-    name: 'Dual Hybrid Post-Quantum Defense Conjunction',
+    name: 'Post-Quantum ML-DSA-65 Defense',
     passed: true,
     score: 1.0,
-    details: 'Dual hybrid post-quantum settlement verified with quantum resistance score 1.0'
+    details: 'Full ML-DSA-65 signature envelope verified; no fabricated classical-signature component'
   });
-  console.log('▶ [URS GATE 6/10] Dual Hybrid Post-Quantum Defense Conjunction');
-  console.log('  ✅ Dual hybrid post-quantum settlement verified with quantum resistance score 1.0\n');
+  console.log('▶ [URS GATE 6/10] Post-Quantum ML-DSA-65 Defense');
+  console.log('  ✅ Full ML-DSA-65 signature envelope verified without fake hybrid claims\n');
 } catch (e: any) {
   gates.push({ gate: 6, name: 'Dual Hybrid Post-Quantum Defense Conjunction', passed: false, score: 0.0, details: e.message });
   console.log(`  ❌ GATE 6 FAILED: ${e.message}\n`);
