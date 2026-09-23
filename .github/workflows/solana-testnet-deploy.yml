@@ -68,9 +68,9 @@ jobs:
           echo "so_path=$SO_PATH" >> "$GITHUB_OUTPUT"
           echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
           {
-            echo "### Solana SBF build"
-            echo "- Artifact: `$SO_PATH`"
-            echo "- SHA-256: `$SHA256`"
+            printf '%s\n' '### Solana SBF build'
+            printf '%s\n' "- Artifact: $SO_PATH"
+            printf '%s\n' "- SHA-256: $SHA256"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload SBF artifact
@@ -125,11 +125,11 @@ jobs:
           set -euo pipefail
           if [[ -z "$DEPLOYER_KEYPAIR_JSON" || -z "$PROGRAM_KEYPAIR_JSON" ]]; then
             {
-              echo "### Testnet deployment blocked"
-              echo "SBF build passed, but deployment secrets are missing."
-              echo "Required repository secrets:"
-              echo "- `SOLANA_TESTNET_DEPLOYER_KEYPAIR`"
-              echo "- `SOLANA_TESTNET_PROGRAM_KEYPAIR`"
+              printf '%s\n' '### Testnet deployment blocked'
+              printf '%s\n' 'SBF build passed, but deployment secrets are missing.'
+              printf '%s\n' 'Required repository secrets:'
+              printf '%s\n' '- SOLANA_TESTNET_DEPLOYER_KEYPAIR'
+              printf '%s\n' '- SOLANA_TESTNET_PROGRAM_KEYPAIR'
             } >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
@@ -167,10 +167,10 @@ jobs:
           echo "deployer_address=$DEPLOYER_ADDRESS" >> "$GITHUB_OUTPUT"
           echo "program_id=$PROGRAM_ID" >> "$GITHUB_OUTPUT"
           {
-            echo "### Testnet signer"
-            echo "- Authority: `$DEPLOYER_ADDRESS`"
-            echo "- Program ID: `$PROGRAM_ID`"
-            echo "- RPC: `$TESTNET_RPC`"
+            printf '%s\n' '### Testnet signer'
+            printf '%s\n' "- Authority: $DEPLOYER_ADDRESS"
+            printf '%s\n' "- Program ID: $PROGRAM_ID"
+            printf '%s\n' "- RPC: $TESTNET_RPC"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Fund Testnet authority if possible
@@ -199,7 +199,11 @@ jobs:
         run: |
           set -euo pipefail
           LOG="$RUNNER_TEMP/solana-testnet-deploy.log"
-          solana program deploy "${{ steps.build.outputs.so_path }}"             --program-id "${{ steps.signer.outputs.program }}"             --keypair "${{ steps.signer.outputs.deployer }}"             --url "$TESTNET_RPC"             --commitment confirmed | tee "$LOG"
+          solana program deploy "${{ steps.build.outputs.so_path }}" \
+            --program-id "${{ steps.signer.outputs.program }}" \
+            --keypair "${{ steps.signer.outputs.deployer }}" \
+            --url "$TESTNET_RPC" \
+            --commitment confirmed | tee "$LOG"
 
           SIGNATURE="$(awk -F': ' '/^Signature:/ {print $2}' "$LOG" | tail -1)"
           if [[ -z "$SIGNATURE" ]]; then
@@ -209,13 +213,13 @@ jobs:
 
           echo "signature=$SIGNATURE" >> "$GITHUB_OUTPUT"
           {
-            echo "### Solana Testnet deployment"
-            echo "- Program ID: `${{ steps.signer.outputs.program_id }}`"
-            echo "- Authority: `${{ steps.signer.outputs.deployer_address }}`"
-            echo "- Transaction: `$SIGNATURE`"
-            echo "- SBF SHA-256: `${{ steps.build.outputs.sha256 }}`"
-            echo "- Program Explorer: https://explorer.solana.com/address/${{ steps.signer.outputs.program_id }}?cluster=testnet"
-            echo "- Transaction Explorer: https://explorer.solana.com/tx/$SIGNATURE?cluster=testnet"
+            printf '%s\n' '### Solana Testnet deployment'
+            printf '%s\n' "- Program ID: ${{ steps.signer.outputs.program_id }}"
+            printf '%s\n' "- Authority: ${{ steps.signer.outputs.deployer_address }}"
+            printf '%s\n' "- Transaction: $SIGNATURE"
+            printf '%s\n' "- SBF SHA-256: ${{ steps.build.outputs.sha256 }}"
+            printf '%s\n' "- Program Explorer: https://explorer.solana.com/address/${{ steps.signer.outputs.program_id }}?cluster=testnet"
+            printf '%s\n' "- Transaction Explorer: https://explorer.solana.com/tx/$SIGNATURE?cluster=testnet"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Verify deployed program
