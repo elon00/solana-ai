@@ -27,7 +27,11 @@ export function computeDigestHex(data: string): string {
 }
 
 // Secret material remains in process memory only and is never returned by the public key API.
-const activeKeyStorage = new Map<string, { secretKey: Uint8Array; publicKey: Uint8Array }>();
+const activeKeyStorage = new Map<string, {
+  algorithm: 'ML-KEM-768' | 'ML-DSA-65';
+  secretKey: Uint8Array;
+  publicKey: Uint8Array;
+}>();
 
 export function generatePqcKeyPair(
   algorithm: 'ML-KEM-768' | 'ML-DSA-65' = 'ML-DSA-65',
@@ -63,7 +67,7 @@ export function generatePqcKeyPair(
 
   const publicKey = bytesToHex(pubBytes);
   const keyId = `pqc-${algorithm.toLowerCase()}-${publicKey.substring(0, 12)}`;
-  activeKeyStorage.set(keyId, { secretKey: secBytes, publicKey: pubBytes });
+  activeKeyStorage.set(keyId, { algorithm, secretKey: secBytes, publicKey: pubBytes });
 
   return {
     keyId,
@@ -101,6 +105,9 @@ export function decapsulateStoredKEM(keyId: string, ciphertextHex: string): stri
   if (!stored) {
     throw new Error('ML-KEM secret key is not available in this runtime');
   }
+  if (stored.algorithm !== 'ML-KEM-768') {
+    throw new Error('ML-KEM decapsulation requires an ML-KEM-768 key');
+  }
   return bytesToHex(ml_kem768.decapsulate(hexToBytes(ciphertextHex), stored.secretKey));
 }
 
@@ -132,6 +139,9 @@ export function createPqcHybridSignature(
   const stored = activeKeyStorage.get(keyPair.keyId);
   if (!stored) {
     throw new Error('ML-DSA signing key is not available in this runtime');
+  }
+  if (stored.algorithm !== 'ML-DSA-65') {
+    throw new Error('Stored key is not an ML-DSA-65 signing key');
   }
   if (bytesToHex(stored.publicKey) !== keyPair.publicKey) {
     throw new Error('Stored ML-DSA key does not match the supplied public key');
@@ -200,6 +210,9 @@ export function signPqcMessage(
   const stored = activeKeyStorage.get(keyId);
   if (!stored) {
     throw new Error('ML-DSA signing key is not available in this runtime');
+  }
+  if (stored.algorithm !== 'ML-DSA-65') {
+    throw new Error('ML-DSA signing requires an ML-DSA-65 key');
   }
 
   const signatureBytes = ml_dsa65.sign(new TextEncoder().encode(message), stored.secretKey);
