@@ -3,7 +3,8 @@
   "network": "solana-testnet",
   "expectedDeployer": "ETMPB8Kha7UJDnqBX93MFBhKCe9Q8v5YZJdugsoJfVCV",
   "expectedProgramId": "G8psSQ47tMQX1zh9STk24NtmNrwzB43uHBbrXaWHMBxk",
-  "requestedFromMain": "2feb7879e4aaeb9f824dfcf04c3092f55a49ef29",
+  "requestedFromMain": "039e2cf2a90ea74d1e94af31535598838cd3b353",
   "reason": "User explicitly authorized full Solana Testnet deployment.",
-  "failClosed": true
+  "failClosed": true,
+  "retryReason": "Retry after replacing shallow-clone diff detection with immutable push-before binding."
 }
