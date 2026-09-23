@@ -27,10 +27,22 @@ const agent = fs.readFileSync('src/solana_ai.ts', 'utf8');
 assert.ok(agent.includes('registerAction'), 'Agent action registry is required');
 assert.ok(agent.includes("status: 'FAIL_CLOSED'"), 'Unknown/failed agent actions must fail closed');
 assert.ok(agent.includes('await handler(input)'), 'Agent must execute a registered handler before completion');
+assert.ok(agent.includes("case 'bigint'"), 'Agent canonicalization must support BigInt deterministically');
+assert.ok(agent.includes('Cyclic proof values are not supported'), 'Agent canonicalization must fail closed on cycles');
 
 const program = fs.readFileSync('program/src/lib.rs', 'utf8');
 assert.ok(program.includes('record_commitment'), 'On-chain proof registry is required');
+assert.ok(
+  program.includes("data[..REGISTRY_DATA_LEN].iter().any(|byte| *byte != 0)"),
+  'Registry initialization must reject takeover/reinitialization'
+);
 assert.ok(!program.includes('try_borrow_mut_lamports'), 'Lamport mutation cannot be represented as token minting');
+
+const reality = fs.readFileSync('scripts/reality-universal.ts', 'utf8');
+assert.ok(
+  reality.includes('authorizationVerification = verifyPqcSignature'),
+  'Authorization reality gate must execute full signature verification'
+);
 
 const launchpad = fs.readFileSync('.github/workflows/token-launchpad-testnet.yml', 'utf8');
 assert.ok(launchpad.includes('--program-2022'), 'Launchpad must use Token-2022');
