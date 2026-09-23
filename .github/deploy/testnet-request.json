@@ -1,0 +1,9 @@
+{
+  "action": "deploy",
+  "network": "solana-testnet",
+  "expectedDeployer": "ETMPB8Kha7UJDnqBX93MFBhKCe9Q8v5YZJdugsoJfVCV",
+  "expectedProgramId": "G8psSQ47tMQX1zh9STk24NtmNrwzB43uHBbrXaWHMBxk",
+  "requestedFromMain": "2feb7879e4aaeb9f824dfcf04c3092f55a49ef29",
+  "reason": "User explicitly authorized full Solana Testnet deployment.",
+  "failClosed": true
+}
