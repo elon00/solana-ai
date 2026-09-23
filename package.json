@@ -9,11 +9,12 @@
     "audit:crypto": "node scripts/audit-crypto.mjs",
     "reality:universal": "npx tsx scripts/reality-universal.ts",
     "reality:certify": "npx tsx scripts/generate-urs-certificate.ts",
-    "test": "npm run test:nist && npm run audit:crypto && npm run reality:universal",
+    "test": "npm run test:nist && npm run test:platform && npm run audit:crypto && npm run reality:universal",
     "colosseum:setup": "node scripts/colosseum-copilot.mjs setup",
     "colosseum:verify": "node scripts/colosseum-copilot.mjs verify",
     "colosseum:update": "node scripts/colosseum-copilot.mjs update",
-    "colosseum:check": "node scripts/check-colosseum-readiness.mjs"
+    "colosseum:check": "node scripts/check-colosseum-readiness.mjs",
+    "test:platform": "npx tsx tests/platform-features.test.mjs"
   },
   "keywords": [
     "solana",
@@ -22,7 +23,12 @@
     "ml-kem",
     "ml-dsa",
     "cryptography",
-    "research"
+    "research",
+    "agentic-ai",
+    "automation",
+    "conway-game-of-life",
+    "multi-wallet",
+    "launchpad"
   ],
   "author": "elon00",
   "license": "Apache-2.0",
