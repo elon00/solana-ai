@@ -48,6 +48,9 @@ fn initialize_registry(program_id: &Pubkey, accounts: &[AccountInfo]) -> Program
     if data.len() < REGISTRY_DATA_LEN {
         return Err(ProgramError::AccountDataTooSmall);
     }
+    if data[..REGISTRY_DATA_LEN].iter().any(|byte| *byte != 0) {
+        return Err(ProgramError::InvalidAccountData);
+    }
 
     data[..REGISTRY_DATA_LEN].fill(0);
     data[0] = REGISTRY_VERSION;
