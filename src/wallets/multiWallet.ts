@@ -61,6 +61,11 @@ export class MultiWalletManager {
 
   public register(name: string, provider: InjectedSolanaProvider): void {
     if (!name.trim()) throw new Error('Wallet name is required');
+    const current = this.providers.get(name);
+    if (current === provider) return;
+    if (this.connected.has(name)) {
+      throw new Error(`Disconnect ${name} before replacing its wallet provider`);
+    }
     this.providers.set(name, provider);
   }
 
