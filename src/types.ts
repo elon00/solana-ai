@@ -1,10 +1,8 @@
 export interface PqcKeyPair {
   keyId: string;
-  algorithm: 'ML-KEM-768' | 'ML-DSA-65' | 'Hybrid-Ed25519-Dilithium';
+  algorithm: 'ML-KEM-768' | 'ML-DSA-65';
   publicKey: string;
   publicKeyFingerprint?: string;
-  privateKeyPreview?: string;
-  secretKey?: string;
   keySizeBits: number;
   nistSecurityLevel?: number;
   securityLevel?: number;
@@ -17,7 +15,7 @@ export interface PqcProof {
   txId: string;
   payload: string;
   signature: string;
-  algorithm: 'ML-DSA-65' | 'Hybrid-Ed25519-Dilithium';
+  algorithm: 'ML-DSA-65';
   publicKey: string;
   timestamp: string;
   nistFipsStandard: string;
@@ -27,7 +25,11 @@ export interface PqcProof {
 export interface SolanaAiAgentTask {
   taskId: string;
   agentName: string;
-  instruction: string;
+  action: string;
+  input?: unknown;
+  result?: unknown;
+  error?: string;
+  proofSubject?: string;
   status: 'PENDING' | 'EXECUTING' | 'COMPLETED' | 'FAIL_CLOSED';
   pqcSignature?: string;
   executionTimestamp: string;
