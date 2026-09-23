@@ -86,6 +86,7 @@ jobs:
         shell: bash
         env:
           MANUAL_DEPLOY: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy == true }}
+          PUSH_BEFORE: ${{ github.event.before }}
         run: |
           set -euo pipefail
           REQUESTED=false
@@ -94,11 +95,15 @@ jobs:
 
           if [[ "$MANUAL_DEPLOY" == "true" ]]; then
             REQUESTED=true
-          elif [[ "$GITHUB_EVENT_NAME" == "push" ]] && \
-               git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" | grep -qx '.github/deploy/testnet-request.json'; then
+          elif [[ "$GITHUB_EVENT_NAME" == "push" && -f .github/deploy/testnet-request.json ]]; then
             ACTION="$(jq -r '.action // empty' .github/deploy/testnet-request.json)"
             NETWORK="$(jq -r '.network // empty' .github/deploy/testnet-request.json)"
-            if [[ "$ACTION" == "deploy" && "$NETWORK" == "solana-testnet" ]]; then
+            REQUESTED_FROM_MAIN="$(jq -r '.requestedFromMain // empty' .github/deploy/testnet-request.json)"
+            FAIL_CLOSED="$(jq -r '.failClosed // false' .github/deploy/testnet-request.json)"
+            if [[ "$ACTION" == "deploy" &&
+                  "$NETWORK" == "solana-testnet" &&
+                  "$FAIL_CLOSED" == "true" &&
+                  "$REQUESTED_FROM_MAIN" == "$PUSH_BEFORE" ]]; then
               REQUESTED=true
               EXPECTED_DEPLOYER="$(jq -r '.expectedDeployer // empty' .github/deploy/testnet-request.json)"
               EXPECTED_PROGRAM_ID="$(jq -r '.expectedProgramId // empty' .github/deploy/testnet-request.json)"
