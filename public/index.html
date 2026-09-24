@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solana AI Platform — Post-Quantum SVM & x402 Agentic Protocol</title>
+  <meta name="description" content="Decentralized Solana AI agent orchestrator with NIST FIPS 203/204 Post-Quantum Cryptography and x402 v2 Bazaar micropayments.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <style>
+    :root {
+      --bg: #090b10;
+      --card-bg: #121824;
+      --card-border: #1f2a3d;
+      --accent-cyan: #00f3ff;
+      --accent-purple: #9945ff;
+      --accent-green: #14f195;
+      --text-main: #f0f4f8;
+      --text-muted: #8899a6;
+      --code-bg: #0d121c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, monospace; }
+    body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; padding: 2rem 1rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--card-border); }
+    h1 { font-size: 2.4rem; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple), var(--accent-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; }
+    p.lead { color: var(--text-muted); font-size: 1.15rem; max-width: 800px; margin: 0 auto; }
+    .badge-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-top: 1.2rem; }
+    .badge { background: #1a2333; border: 1px solid var(--card-border); color: var(--accent-cyan); padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; text-decoration: none; }
+    .badge.green { color: var(--accent-green); border-color: rgba(20, 241, 149, 0.3); }
+    .badge.purple { color: #d8b4fe; border-color: rgba(153, 69, 255, 0.3); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+    .card h2 { font-size: 1.3rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: #fff; }
+    .card h2 span { color: var(--accent-green); }
+    .key-value { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+    .key-value .label { color: var(--text-muted); }
+    .key-value .val { font-weight: 600; color: #fff; word-break: break-all; }
+    .code-box { background: var(--code-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 0.85rem; font-family: Consolas, monospace; font-size: 0.82rem; color: #4ade80; overflow-x: auto; margin-top: 0.8rem; }
+
+    .action-btn { display: inline-block; background: linear-gradient(135deg, var(--accent-purple), #7928ca); color: #fff; text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; transition: transform 0.15s, opacity 0.15s; cursor: pointer; border: none; font-size: 0.95rem; }
+    .action-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .action-btn.secondary { background: #1f293d; color: var(--accent-cyan); border: 1px solid var(--card-border); }
+
+    .interactive-section { margin-top: 1.5rem; }
+    footer { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 3rem; border-top: 1px solid var(--card-border); padding-top: 1.5rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>⚡ Solana AI Platform</h1>
+      <p class="lead">Autonomous Agentic Architecture, NIST FIPS 203/204 Post-Quantum Lattice Verification, and x402 v2 Bazaar Agent Micropayments on Solana.</p>
+      <div class="badge-bar">
+        <span class="badge green">● Solana Testnet Deployed</span>
+        <span class="badge purple">x402 v2 Bazaar Protocol</span>
+        <span class="badge">NIST ML-KEM-768 / ML-DSA-65</span>
+        <span class="badge green">10/10 URS Gates Certified</span>
+        <span class="badge">Crypto World's Fair 2026</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Solana Testnet Status -->
+      <div class="card">
+        <h2><span>🌐</span> Solana On-Chain Deployment</h2>
+        <div class="key-value">
+          <span class="label">Program ID:</span>
+          <span class="val"><a href="https://explorer.solana.com/address/Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3?cluster=testnet" target="_blank" style="color: var(--accent-cyan);">Bnpd9YGaVxMA...q3</a></span>
+        </div>
+        <div class="key-value">
+          <span class="label">Network:</span>
+          <span class="val">Solana Testnet</span>
+        </div>
+        <div class="key-value">
+          <span class="label">Official Wallet:</span>
+          <span class="val">BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3</span>
+        </div>
+        <div class="key-value">
+          <span class="label">Token Supply Policy:</span>
+          <span class="val" style="color: var(--accent-green);">UNCAPPED_ELASTIC</span>
+        </div>
+        <div class="key-value">
+          <span class="label">Execution Signature:</span>
+          <span class="val">5DKkhtQWdPBZ...gxDN</span>
+        </div>
+        <div style="margin-top: 1rem;">
+          <a href="https://explorer.solana.com/address/Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3?cluster=testnet" target="_blank" class="action-btn secondary">View on Solana Explorer →</a>
+        </div>
+      </div>
+
+      <!-- x402 Bazaar Protocol -->
+      <div class="card">
+        <h2><span>🛒</span> x402 v2 Bazaar Discovery</h2>
+        <div class="key-value">
+          <span class="label">Protocol Version:</span>
+          <span class="val">x402 v2</span>
+        </div>
+        <div class="key-value">
+          <span class="label">Facilitator:</span>
+          <span class="val">https://x402.org/facilitator</span>
+        </div>
+        <div class="key-value">
+          <span class="label">Settlement Asset:</span>
+          <span class="val">USDC (4zMMC...ncDU)</span>
+        </div>
+        <div class="key-value">
+          <span class="label">Bazaar Spec:</span>
+          <span class="val"><a href="/.well-known/x402-bazaar.json" style="color: var(--accent-cyan);">/.well-known/x402-bazaar.json</a></span>
+        </div>
+        <div class="key-value">
+          <span class="label">Standard Spec:</span>
+          <span class="val"><a href="/.well-known/x402.json" style="color: var(--accent-cyan);">/.well-known/x402.json</a></span>
+        </div>
+        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+          <a href="/.well-known/x402-bazaar.json" target="_blank" class="action-btn secondary">Open Bazaar JSON</a>
+          <button id="testPaymentBtn" class="action-btn">Trigger 402 Challenge</button>
+        </div>
+      </div>
+
+      <!-- Post-Quantum Cryptography Engine -->
+      <div class="card">
+        <h2><span>🛡️</span> Post-Quantum Lattice Suite</h2>
+        <div class="key-value">
+          <span class="label">Key Encapsulation:</span>
+          <span class="val">NIST FIPS 203 (ML-KEM-768)</span>
+        </div>
+        <div class="key-value">
+          <span class="label">Digital Signatures:</span>
+          <span class="val">NIST FIPS 204 (ML-DSA-65)</span>
+        </div>
+        <div class="key-value">
+          <span class="label">KAT Vectors:</span>
+          <span class="val">RFC 5869 HKDF / SHA-256 (Byte-for-Byte)</span>
+        </div>
+        <div class="key-value">
+          <span class="label">Cryptographic Assertions:</span>
+          <span class="val" style="color: var(--accent-green);">24/24 PASS</span>
+        </div>
+        <div class="key-value">
+          <span class="label">Hybrid Conjunction:</span>
+          <span class="val">Ed25519 + ML-DSA-65 Validated</span>
+        </div>
+        <div class="code-box">
+          ML-KEM-768: 1,184B pk | 2,400B sk | 1,088B ct<br>
+          ML-DSA-65:  1,952B pk | 4,032B sk | 3,309B sig
+        </div>
+      </div>
+
+      <!-- Colosseum Hackathon Package -->
+      <div class="card">
+        <h2><span>🏛️</span> Colosseum Copilot & Hackathon</h2>
+        <div class="key-value">
+          <span class="label">Competition:</span>
+          <span class="val">Crypto World's Fair — Fall 2026</span>
+        </div>
+        <div class="key-value">
+          <span class="label">Track:</span>
+          <span class="val">Solana / AI Agents & Infrastructure</span>
+        </div>
+        <div class="key-value">
+          <span class="label">Team / Architect:</span>
+          <span class="val">Martin (@elon00)</span>
+        </div>
+        <div class="key-value">
+          <span class="label">Colosseum JSON:</span>
+          <span class="val"><a href="/colosseum-submission.json" style="color: var(--accent-cyan);">colosseum-submission.json</a></span>
+        </div>
+        <div class="key-value">
+          <span class="label">Mesh Sync Node:</span>
+          <span class="val">Registered in BountyHunter OS</span>
+        </div>
+        <div style="margin-top: 1rem;">
+          <a href="https://github.com/elon00/solana-ai" target="_blank" class="action-btn secondary">GitHub Repository →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live x402 Terminal / Test Area -->
+    <div class="card interactive-section">
+      <h2><span>⚡</span> Autonomous x402 Agent Endpoint Tester</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.8rem;">
+        Simulate an AI agent interacting with the <code>/api/v1/x402/agent/action</code> gateway. Unauthenticated requests trigger the HTTP 402 Payment Required challenge with Bazaar pricing.
+      </p>
+      <div id="outputConsole" class="code-box" style="min-height: 120px;">Click "Trigger 402 Challenge" above to test the x402 payment rail.</div>
+    </div>
+
+    <footer>
+      <p>Solana AI Platform &copy; 2026 Martin (@elon00) &bull; Built with Solana SVM, Post-Quantum Cryptography, and x402 Bazaar Protocol</p>
+    </footer>
+  </div>
+
+  <script>
+    const outputConsole = document.getElementById('outputConsole');
+    const testPaymentBtn = document.getElementById('testPaymentBtn');
+
+    testPaymentBtn.addEventListener('click', async () => {
+      outputConsole.textContent = 'Calling /api/v1/x402/agent/action ...';
+      try {
+        const res = await fetch('/api/v1/x402/agent/action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'CONWAY_ORCHESTRATE', payload: { steps: 1 } })
+        });
+        
+        const payReqHeader = res.headers.get('PAYMENT-REQUIRED') || res.headers.get('payment-required');
+        let body;
+        try {
+          body = await res.json();
+        } catch {
+          body = await res.text();
+        }
+
+        outputConsole.textContent = `[HTTP STATUS ${res.status}]\n` +
+          `PAYMENT-REQUIRED Header: ${payReqHeader ? payReqHeader.slice(0, 100) + '...' : 'none'}\n\n` +
+          `Response Body:\n` + JSON.stringify(body, null, 2);
+      } catch (err) {
+        outputConsole.textContent = 'Error testing endpoint: ' + err.message + '\n\nNote: If running on a purely static host without backend functions, review /.well-known/x402-bazaar.json for direct client-side integration.';
+      }
+    });
+  </script>
+</body>
+</html>

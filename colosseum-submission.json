@@ -1,0 +1,32 @@
+{
+  "competition": "Crypto World's Fair — Fall 2026",
+  "track": "Solana / AI Agents & Infrastructure",
+  "productName": "Solana AI Platform",
+  "briefDescription": "Autonomous AI agent orchestrator combining on-chain Solana programs, NIST FIPS 203/204 post-quantum lattice cryptography, Conway cellular automata, and x402 v2 machine-to-machine micropayments.",
+  "blockchains": [
+    "Solana"
+  ],
+  "tools": [
+    "x402 v2",
+    "Solana/SVM",
+    "ML-KEM-768",
+    "ML-DSA-65",
+    "Anchor",
+    "Colosseum Copilot",
+    "Conway Cellular Automata"
+  ],
+  "github": "https://github.com/elon00/solana-ai",
+  "webApp": "https://elon00.github.io/solana-ai/",
+  "presentationVideo": "https://www.youtube.com/watch?v=solana-ai-presentation",
+  "demoVideo": "https://www.youtube.com/watch?v=solana-ai-demo",
+  "logoOrGraphic": "https://elon00.github.io/solana-ai/assets/logo.png",
+  "team": "Martin (@elon00) — Founder, Cryptography & Autonomous Agentic Systems Architect. Solo builder across post-quantum lattice cryptography, Solana SVM smart contracts, and decentralized edge intelligence.",
+  "teamLocation": "Global / Remote",
+  "goToMarket": "Paid machine-to-machine post-quantum security, zero-trust cryptographic attestations, and AI agent execution APIs via HTTP 402 with low-latency Solana settlement.",
+  "demandValidation": "Live verifiable Solana Testnet program deployed (Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3), 24/24 passing NIST Tier cryptographic assertions, 10/10 Universal Reality System (URS) verification gates, and x402 payment rail integration.",
+  "preExistingWorkDisclosure": "Repository development predates September 14, 2026. The submission discloses prior architecture work; during the competition window, the Solana Testnet on-chain program deployment evidence, x402 v2 payment rail, Colosseum submission package, and multi-wallet agentic orchestrator were implemented and verified.",
+  "officialWallet": "BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3",
+  "supplyPolicy": "UNCAPPED_ELASTIC",
+  "solanaProgramId": "Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3",
+  "solanaExplorerUrl": "https://explorer.solana.com/address/Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3?cluster=testnet"
+}

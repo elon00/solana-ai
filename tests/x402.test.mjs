@@ -13,7 +13,7 @@ import { X402HttpClient } from '../src/x402/client.ts';
 import { X402ResourceGate } from '../src/x402/resourceGate.ts';
 import { registerX402AgentAction, X402_AGENT_ACTION } from '../src/x402/agentAction.ts';
 
-const payTo = '8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es';
+const payTo = 'BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3';
 const requirement = {
   scheme: 'exact',
   network: SOLANA_DEVNET_CAIP2,

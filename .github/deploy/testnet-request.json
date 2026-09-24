@@ -1,7 +1,7 @@
 {
   "action": "deploy",
   "network": "solana-testnet",
-  "expectedDeployer": "8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es",
+  "expectedDeployer": "BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3",
   "expectedProgramId": "Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3",
   "requestedFromMain": "a75a8d6a88021c97b976e0a27b34891dba4cb0d6",
   "reason": "User explicitly requested novice-friendly one-click Solana Testnet redeployment with a fresh transaction signature and verifiable evidence.",

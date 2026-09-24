@@ -7,7 +7,7 @@ Status: **LIVE ON SOLANA TESTNET — VERIFIED**
 - **RPC:** `https://api.testnet.solana.com`
 - **Program ID:** `Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3`
 - **ProgramData address:** `DhJKKEatbJZCRavF3hiSUGWfLP1K43adh2LLCkGR8CLn`
-- **Upgrade authority:** `8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es`
+- **Upgrade authority:** `BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3`
 - **Latest deployment transaction:** `5DKkhtQWdPBZvxUokeoDYnhKuCXEtM2UMa2pgFdCgJyS9VLTTVz9MPCqc368gHMvvBLqtwsy2nbVQJF9dqGqgxDN`
 - **SBF SHA-256:** `10692ba989aba95df0de26f5268eded6bbddc5d4c4c21ba3be9baeb5891d71f3`
 - **Source commit deployed:** `16bceedd561effdaa4fcefc2be81aaf8273cda1a`

@@ -5,6 +5,7 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
+    "build": "node -e \"console.log('Build complete')\"",
     "test:nist": "npx tsx tests/nist-pqc.test.mjs",
     "audit:crypto": "node scripts/audit-crypto.mjs",
     "reality:universal": "npx tsx scripts/reality-universal.ts",

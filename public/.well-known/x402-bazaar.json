@@ -1,0 +1,64 @@
+{
+  "x402Version": 2,
+  "service": "Solana AI Platform",
+  "facilitator": "https://x402.org/facilitator",
+  "ready": true,
+  "catalogRegistration": "A Bazaar-capable facilitator indexes a resource after a conformant paid settlement echoes the bazaar extension.",
+  "provider": {
+    "name": "Solana AI / Martin",
+    "website": "https://elon00.github.io/solana-ai/",
+    "payTo": "BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3",
+    "network": "solana-testnet",
+    "caip2": "solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z",
+    "tokenMint": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+    "currency": "USDC",
+    "supplyPolicy": "UNCAPPED_ELASTIC",
+    "smartContract": "Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3"
+  },
+  "items": [
+    {
+      "resource": "https://elon00.github.io/solana-ai/api/v1/x402/agent/action",
+      "type": "http",
+      "x402Version": 2,
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z",
+          "amount": "1000",
+          "asset": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+          "payTo": "BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3",
+          "maxTimeoutSeconds": 60,
+          "extra": {
+            "name": "USDC",
+            "version": "2"
+          }
+        }
+      ],
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "body": {
+                "action": "CONWAY_ORCHESTRATE",
+                "payload": {
+                  "steps": 1
+                }
+              }
+            },
+            "output": {
+              "type": "json",
+              "example": {
+                "success": true,
+                "protocol": "x402-v2",
+                "service": "solana-ai-agent-action"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

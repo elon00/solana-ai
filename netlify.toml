@@ -1,0 +1,24 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, PAYMENT-SIGNATURE, X-Payment-Signature, x402-version"
+
+[[headers]]
+  for = "/.well-known/*"
+  [headers.values]
+    Content-Type = "application/json; charset=utf-8"
+    Access-Control-Allow-Origin = "*"
