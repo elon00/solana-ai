@@ -26,6 +26,7 @@ The repository contains working cryptographic test code and a Solana program imp
 - Rust/Solana authority-bound proof-registry program
 - real `cargo build-sbf` verification and successful Solana Testnet deployment with independently verified executable Program account
 - guarded Token-2022 Testnet launchpad workflow with metadata and uncapped mint-authority supply policy
+- x402 V2 HTTP payment protocol integration with Solana Devnet policy controls, facilitator verify/settle flow, and AI-agent/PQC receipt synchronization
 - repository CI, RustSec and CodeQL security gates
 
 ### What is not claimed
@@ -43,6 +44,7 @@ Run the repository's cryptographic checks with:
 ```bash
 npm run test:nist
 npm run test:agentic
+npm run test:x402
 npm run audit:crypto
 npm run check:real-features
 npm run reality:universal
@@ -85,6 +87,27 @@ The private key is written only under the git-ignored `.secrets/` directory; the
 ### Token supply / launchpad
 
 The launchpad supports **uncapped issuance while mint authority remains active**. A literally infinite on-chain supply does not exist because token amounts are integer-bounded. See [LAUNCHPAD.md](LAUNCHPAD.md).
+
+### x402 agentic payments
+
+The project now implements the **x402 V2 HTTP flow** as a framework-neutral payment layer:
+
+- `PAYMENT-REQUIRED` challenge parsing/encoding;
+- policy-bound `PAYMENT-SIGNATURE` paid retries;
+- facilitator `/supported`, `/verify`, and `/settle`;
+- `PAYMENT-RESPONSE` settlement receipts;
+- `X402_HTTP_FETCH` agent action whose paid result is bound into the existing ML-DSA-65 task proof.
+
+For current reference compatibility, x402 testing uses **Solana Devnet** (`solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1`) and Devnet USDC. The deployed Solana AI program remains on **Solana Testnet**; the two network roles are not falsely conflated.
+
+Run:
+
+```bash
+npm run test:x402
+npm run x402:facilitator
+```
+
+See [X402_INTEGRATION.md](X402_INTEGRATION.md). A real x402 payment is **not** claimed until an actual Devnet USDC settlement transaction is captured.
 
 ### Testnet deployment
 
