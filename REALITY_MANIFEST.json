@@ -1,7 +1,7 @@
 {
   "protocol": "solana-ai",
   "system": "SOLANA-AI-PLATFORM",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "standard": "UNIVERSAL_REALITY_SYSTEM_v1.0",
   "law": "URS_10 = min(E, I, O, V, R, C, P, F, A, H) * 10",
   "criticalFailureRule": "Any Critical Failure = 0 => Feature Cannot Be Called Production-Ready",
@@ -17,6 +17,12 @@
       "name": "PQC_LATTICE_CORE",
       "description": "NIST FIPS 203 ML-KEM-768 and NIST FIPS 204 ML-DSA-65 integration with full signature verification",
       "status": "INTERNAL_VERIFICATION_ONLY",
+      "realityScore": 1
+    },
+    {
+      "name": "X402_AGENTIC_PAYMENTS",
+      "description": "x402 V2 HTTP challenge/signature/receipt transport, facilitator verification/settlement client, spend-policy enforcement, and paid agent-action synchronization with ML-DSA task proofs.",
+      "status": "PROTOCOL_INTEGRATED_CI_VERIFIED_LIVE_SETTLEMENT_PENDING",
       "realityScore": 1
     },
     {
@@ -67,6 +73,7 @@
   "weakestLinkDimension": "V/H (Independent verification and human/external audit pending)",
   "productionReady": false,
   "notes": [
+    "x402 V2 protocol handling is integrated and CI-tested, but live Devnet USDC settlement evidence is still pending.",
     "Solana Testnet deployment is independently evidenced by a successful signed workflow, executable Program account verification, Program ID, transaction signature, and retained evidence artifact.",
     "Internal tests and workflow builds are engineering evidence, not independent production certification.",
     "Token launch is not claimed until a real Testnet mint address and launch transaction evidence exist.",
@@ -84,5 +91,28 @@
     "workflowRunId": 35848403836,
     "executableVerified": true,
     "evidenceArtifact": "solana-ai-testnet-deployment-evidence"
+  },
+  "x402": {
+    "protocolVersion": 2,
+    "transport": "HTTP",
+    "paymentHeaders": [
+      "PAYMENT-REQUIRED",
+      "PAYMENT-SIGNATURE",
+      "PAYMENT-RESPONSE"
+    ],
+    "defaultTestNetwork": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+    "defaultTestAsset": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+    "facilitatorDefault": "https://x402.org/facilitator",
+    "agentAction": "X402_HTTP_FETCH",
+    "policyControls": [
+      "network",
+      "scheme",
+      "asset",
+      "payTo",
+      "maxAtomicAmount",
+      "host"
+    ],
+    "liveSettlementVerified": false,
+    "note": "Protocol behavior is CI-tested. No live Devnet USDC x402 settlement is claimed until a real settlement transaction is captured."
   }
 }
