@@ -11,6 +11,13 @@ const required = [
   '.github/workflows/token-launchpad-testnet.yml',
   'LAUNCHPAD.md',
   'TESTNET_DEPLOYMENT.md',
+  'src/x402/protocol.ts',
+  'src/x402/facilitator.ts',
+  'src/x402/client.ts',
+  'src/x402/resourceGate.ts',
+  'src/x402/agentAction.ts',
+  'tests/x402.test.mjs',
+  'X402_INTEGRATION.md',
 ];
 
 for (const file of required) {
@@ -53,6 +60,19 @@ assert.ok(launchpad.includes('Initial-issuance transaction signature missing'), 
 const deployment = fs.readFileSync('.github/workflows/solana-testnet-deploy.yml', 'utf8');
 assert.ok(deployment.includes('cargo build-sbf'), 'Deployment must build a real SBF artifact');
 assert.ok(deployment.includes('solana program deploy'), 'Deployment must submit a Solana program deploy transaction');
+
+const x402Protocol = fs.readFileSync('src/x402/protocol.ts', 'utf8');
+const x402Client = fs.readFileSync('src/x402/client.ts', 'utf8');
+const x402Gate = fs.readFileSync('src/x402/resourceGate.ts', 'utf8');
+const x402Agent = fs.readFileSync('src/x402/agentAction.ts', 'utf8');
+assert.ok(x402Protocol.includes("paymentRequired: 'PAYMENT-REQUIRED'"), 'x402 PAYMENT-REQUIRED header is required');
+assert.ok(x402Protocol.includes("paymentSignature: 'PAYMENT-SIGNATURE'"), 'x402 PAYMENT-SIGNATURE header is required');
+assert.ok(x402Protocol.includes("paymentResponse: 'PAYMENT-RESPONSE'"), 'x402 PAYMENT-RESPONSE header is required');
+assert.ok(x402Client.includes('maxAtomicAmount'), 'x402 client must enforce a spend ceiling');
+assert.ok(x402Client.includes('allowedPayTo'), 'x402 client must enforce recipient policy');
+assert.ok(x402Gate.includes('facilitator.verify'), 'x402 resource gate must verify before resource execution');
+assert.ok(x402Gate.includes('facilitator.settle'), 'x402 resource gate must settle payment');
+assert.ok(x402Agent.includes('X402_HTTP_FETCH'), 'Agent runtime must expose the x402 paid-fetch action');
 
 console.log('Real feature integrity checks: PASS');
 console.log('External on-chain deployment/launch still require user-controlled signers and network execution.');
