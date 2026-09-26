@@ -1,0 +1,45 @@
+name: Autonomous One-Click Reality Check
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main","master","gh-pages"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  autonomous-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Run safe project quality gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e "const p=require('./package.json'); console.log(Object.keys(p.scripts||{}).join('\n'))" > /tmp/scripts.txt
+          if grep -qx "lint" /tmp/scripts.txt; then npm run lint; fi
+          if grep -qx "typecheck" /tmp/scripts.txt; then npm run typecheck; fi
+          if grep -qx "test" /tmp/scripts.txt; then npm test; fi
+          if grep -qx "build" /tmp/scripts.txt; then npm run build; fi
+
+      - name: Reality-first technology audit
+        run: node scripts/autonomous-tech-audit.mjs
+
+      - name: Upload technology report
+        uses: actions/upload-artifact@v4
+        with:
+          name: autonomous-tech-report
+          path: AUTONOMOUS_TECH_REPORT.json
