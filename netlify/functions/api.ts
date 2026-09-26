@@ -35,10 +35,10 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
         solanaProgramId: TESTNET_PROGRAM_ID,
         supplyPolicy: "UNCAPPED_ELASTIC",
         postQuantum: {
-          kem: "NIST FIPS 203 (ML-KEM-768)",
-          dsa: "NIST FIPS 204 (ML-DSA-65)",
-          assertions: "24/24 passed",
-          ursGates: "10/10 certified"
+          kem: "ML-KEM-768 research integration",
+          dsa: "ML-DSA-65 research integration",
+          localTests: "repository tests only",
+          certification: "none; not independently FIPS-validated"
         },
         x402: {
           version: 2,
@@ -114,42 +114,23 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
       };
     }
 
-    // Payment provided: parse and return settlement response
-    let decodedSig: any = null;
-    try {
-      decodedSig = JSON.parse(Buffer.from(paymentSig, "base64").toString("utf-8"));
-    } catch {
-      decodedSig = { raw: paymentSig };
-    }
-
-    const settlement = {
-      success: true,
-      transaction: `sim_${Date.now()}`,
-      network: "solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z",
-      payer: decodedSig?.payload?.payer || "unknown-agent",
-      payTo: OFFICIAL_WALLET,
-      amount: "1000",
-    };
-
-    const encodedSettlement = Buffer.from(JSON.stringify(settlement)).toString("base64");
-
+    // Payment was supplied, but this Netlify adapter must not fabricate settlement.
+    // Live x402 settlement is only successful after an external facilitator verifies
+    // and settles the payment on-chain. Until that integration is configured here,
+    // fail closed and return an explicit non-settlement response.
     return {
-      statusCode: 200,
+      statusCode: 503,
       headers: {
         ...CORS_HEADERS,
         "Content-Type": "application/json",
-        "PAYMENT-RESPONSE": encodedSettlement,
-        "X-Payment-Response": encodedSettlement,
       },
       body: JSON.stringify({
-        success: true,
-        action: "CONWAY_ORCHESTRATE",
-        result: {
-          status: "completed",
-          gridEvolution: "blinker_period_2",
-          proofOfExecution: "pqc_dsa_authorized",
-          settlement,
-        },
+        success: false,
+        verified: false,
+        status: "SETTLEMENT_NOT_VERIFIED",
+        protocol: "x402-v2",
+        message: "A payment payload was supplied, but this endpoint has not independently verified and settled it. No transaction is fabricated.",
+        nextStep: "Configure a compatible x402 facilitator and record the real Solana settlement transaction before returning paid content."
       }),
     };
   }
