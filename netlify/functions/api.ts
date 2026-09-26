@@ -1,4 +1,5 @@
 import type { Handler, HandlerEvent, HandlerContext } from "@netlify/functions";
+import { createMcpRuntime, createSolanaActionMetadata, createBlinkUrl } from "../../src/integrations/nextgen";
 
 const OFFICIAL_WALLET = "BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3";
 const TESTNET_PROGRAM_ID = "Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3";
@@ -11,6 +12,24 @@ const CORS_HEADERS = {
   "Access-Control-Expose-Headers": "PAYMENT-REQUIRED, PAYMENT-RESPONSE, X-Payment-Required, X-Payment-Response",
 };
 
+const solanaAiMcp = createMcpRuntime({
+  name: "solana-ai",
+  version: "1.0.0",
+  tools: [
+    {
+      name: "status",
+      description: "Return repository-backed Solana AI runtime identifiers without external certification claims.",
+      execute: async () => ({
+        network: "solana-testnet",
+        programId: TESTNET_PROGRAM_ID,
+        officialWallet: OFFICIAL_WALLET,
+        x402: "protocol integration present; live settlement must be independently verified",
+        pqc: "research integration with repository tests",
+      }),
+    },
+  ],
+});
+
 export const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
   if (event.httpMethod === "OPTIONS") {
     return {
@@ -21,6 +40,51 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
   }
 
   const path = event.path || "";
+
+  if (event.httpMethod === "POST" && path.endsWith("/mcp")) {
+    let body: any = {};
+    try { body = event.body ? JSON.parse(event.body) : {}; }
+    catch { return { statusCode: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" }, body: JSON.stringify({ error: "invalid JSON" }) }; }
+    const response = await solanaAiMcp.handle(body);
+    return {
+      statusCode: response.error ? 400 : 200,
+      headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+      body: JSON.stringify(response),
+    };
+  }
+
+  if (event.httpMethod === "GET" && path.endsWith("/actions/status")) {
+    return {
+      statusCode: 200,
+      headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+      body: JSON.stringify(createSolanaActionMetadata({
+        title: "Solana AI Status",
+        icon: "https://github.com/elon00.png",
+        description: "Action discovery endpoint. No wallet transaction is fabricated by this backend.",
+        label: "Open Solana AI",
+        disabled: true,
+        error: "Wallet-signable transaction builder is not enabled for this Action endpoint.",
+      })),
+    };
+  }
+
+  if (event.httpMethod === "POST" && path.endsWith("/actions/status")) {
+    return {
+      statusCode: 501,
+      headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+      body: JSON.stringify({ error: { message: "No transaction is fabricated. A tested wallet-signable transaction builder is required." } }),
+    };
+  }
+
+  if (event.httpMethod === "GET" && path.endsWith("/blinks/status")) {
+    const base = process.env.URL || "https://example.invalid";
+    const action = `${base}/api/v1/actions/status`;
+    return {
+      statusCode: 200,
+      headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+      body: JSON.stringify({ action, blink: createBlinkUrl(action), status: "DISCOVERY_ONLY" }),
+    };
+  }
 
   // 1. Status / Health endpoint
   if (path.endsWith("/status") || path.endsWith("/health")) {
