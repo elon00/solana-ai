@@ -19,7 +19,8 @@
     "check:real-features": "node scripts/check-real-features.mjs",
     "wallet:create:testnet": "node scripts/create-solana-wallet.mjs",
     "test:x402": "node --import tsx --test tests/x402.test.mjs",
-    "x402:facilitator": "node scripts/check-x402-facilitator.mjs"
+    "x402:facilitator": "node scripts/check-x402-facilitator.mjs",
+    "test:nextgen": "node --test tests/nextgen-integrations.test.mjs"
   },
   "keywords": [
     "solana",
