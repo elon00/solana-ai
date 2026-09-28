@@ -8,15 +8,19 @@
   ],
   "tools": [
     "x402 v2",
+    "Google AI Studio (Gemini 2.0 Flash)",
     "Solana/SVM",
     "ML-KEM-768",
     "ML-DSA-65",
     "Anchor",
     "Colosseum Copilot",
-    "Conway Cellular Automata"
+    "Conway Cellular Automata",
+    "IndexedDB Zero-Cost Ledger",
+    "Netlify Serverless Edge Functions"
   ],
   "github": "https://github.com/elon00/solana-ai",
-  "webApp": "https://elon00.github.io/solana-ai/",
+  "webApp": "https://solana-ai-platform.netlify.app",
+  "webAppGitHubPages": "https://elon00.github.io/solana-ai/",
   "presentationVideo": "https://youtu.be/67GLTV1Ms5U",
   "demoVideo": "https://youtu.be/67GLTV1Ms5U",
   "logoOrGraphic": "https://raw.githubusercontent.com/elon00/solana-ai/main/public/logo.png",

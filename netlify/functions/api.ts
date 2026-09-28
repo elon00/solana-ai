@@ -1,9 +1,13 @@
 import type { Handler, HandlerEvent, HandlerContext } from "@netlify/functions";
+import crypto from "node:crypto";
 import { createMcpRuntime, createSolanaActionMetadata, createBlinkUrl } from "../../src/integrations/nextgen";
 
 const OFFICIAL_WALLET = "BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3";
 const TESTNET_PROGRAM_ID = "Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3";
 const TOKEN_MINT = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
+
+// Ephemeral zero-cost serverless ledger sync cache
+const syncedLedgerRecords: Array<{ id: string | number; action: string; proof: string; status: string; timestamp: string }> = [];
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -199,6 +203,80 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
     };
   }
 
+  // 3. Zero-Cost Storage Synchronization Endpoints
+  if (path.includes("/api/v1/storage")) {
+    if (event.httpMethod === "POST" && path.endsWith("/sync")) {
+      try {
+        const payload = event.body ? JSON.parse(event.body) : {};
+        const incoming = Array.isArray(payload.records) ? payload.records : [];
+        for (const item of incoming) {
+          if (item && item.action) {
+            syncedLedgerRecords.unshift({
+              id: item.id || Date.now(),
+              action: String(item.action).slice(0, 100),
+              proof: String(item.proof || "").slice(0, 100),
+              status: String(item.status || "SYNCED").slice(0, 30),
+              timestamp: item.timestamp || new Date().toISOString(),
+            });
+          }
+        }
+        // Cap to 100 recent entries in ephemeral memory
+        if (syncedLedgerRecords.length > 100) {
+          syncedLedgerRecords.splice(100);
+        }
+        const digest = crypto.createHash("sha256").update(JSON.stringify(syncedLedgerRecords)).digest("hex");
+        return {
+          statusCode: 200,
+          headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            success: true,
+            syncedCount: incoming.length,
+            totalRetained: syncedLedgerRecords.length,
+            attestationHash: `0x${digest}`,
+            tier: "ZERO_COST_SERVERLESS_EPHEMERAL",
+            timestamp: new Date().toISOString(),
+          }),
+        };
+      } catch (err: any) {
+        return {
+          statusCode: 400,
+          headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+          body: JSON.stringify({ success: false, error: err?.message || "Invalid payload" }),
+        };
+      }
+    }
+
+    if (event.httpMethod === "GET" && path.endsWith("/records")) {
+      return {
+        statusCode: 200,
+        headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          success: true,
+          total: syncedLedgerRecords.length,
+          records: syncedLedgerRecords,
+        }),
+      };
+    }
+
+    // Storage Status / Info
+    return {
+      statusCode: 200,
+      headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        status: "ONLINE",
+        service: "Solana AI Zero-Cost Serverless Ledger",
+        storageType: "IndexedDB (Browser) + In-Memory Attested Edge Cache (Netlify)",
+        zeroCostGuarantee: "100% Free / No Database Subscription Required",
+        retainedRecords: syncedLedgerRecords.length,
+        endpoints: {
+          sync: "POST /api/v1/storage/sync",
+          records: "GET /api/v1/storage/records",
+          status: "GET /api/v1/storage"
+        }
+      }),
+    };
+  }
+
   // Fallback response for unmapped API routes
   return {
     statusCode: 200,
@@ -208,6 +286,9 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
       endpoints: [
         "/api/v1/status",
         "/api/v1/x402/agent/action",
+        "/api/v1/storage",
+        "/api/v1/storage/sync",
+        "/api/v1/storage/records",
         "/.well-known/x402-bazaar.json"
       ]
     }),
