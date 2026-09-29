@@ -761,9 +761,9 @@ dependencies = [
 
 [[package]]
 name = "solana-address"
-version = "2.7.0"
+version = "2.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "01332a01c0a3098404d55a724c8d9a92aed4a50fe40a7dd0c7a51e29274c14de"
+checksum = "ea4126c5e3b30cec8e2f8155842a8f031dda8df986437f1ebb0c781715b132d3"
 dependencies = [
  "borsh",
  "bytemuck",
@@ -886,9 +886,9 @@ dependencies = [
 
 [[package]]
 name = "solana-epoch-schedule"
-version = "3.3.0"
+version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1633cfd10cde127f2caf8f12021b4f8e9a425e7e4eea4326e428c422376d6fd"
+checksum = "43ae73018043cff5d3990b3998d846fab2e823c07e3b2f49be602ea584be3d4f"
 dependencies = [
  "serde",
  "serde_derive",
@@ -928,9 +928,9 @@ dependencies = [
 
 [[package]]
 name = "solana-fee-calculator"
-version = "3.3.0"
+version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d4bf4f4afb4704212ef1d994ee65bef7293441721639dfd16f0e60996f37be51"
+checksum = "55add16a1c8f8953379a2b91ff3e94ee7096feac787ca33fad0292c6ca86dbe5"
 dependencies = [
  "log",
  "serde",
@@ -950,9 +950,9 @@ dependencies = [
 
 [[package]]
 name = "solana-hash"
-version = "4.6.0"
+version = "4.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0df9b01495ed31100aca97a7f5862d5e19ab1636d60d1a9f02391408dd9dec84"
+checksum = "c7507df0d2c6350053d125e3df200976fdc68d2a942637d11ac657fe7220949a"
 dependencies = [
  "borsh",
  "bytemuck",
@@ -998,9 +998,9 @@ dependencies = [
 
 [[package]]
 name = "solana-instruction-error"
-version = "3.0.0"
+version = "3.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d45854131ca87ba37ca0d537d06b460f8e0e99f00a8cd5f15492be961c85338"
+checksum = "eeeac4481edb1cbb17aa417bc0945687ac959e3ca26f4541f0ee085a1831b5a1"
 dependencies = [
  "num-traits",
  "solana-program-error",
@@ -1015,7 +1015,7 @@ dependencies = [
  "bitflags",
  "solana-account-info",
  "solana-instruction 4.0.0",
- "solana-instruction-error 3.0.0",
+ "solana-instruction-error 3.1.0",
  "solana-program-error",
  "solana-sanitize",
  "solana-sdk-ids",
@@ -1077,9 +1077,9 @@ dependencies = [
 
 [[package]]
 name = "solana-program"
-version = "5.0.0"
+version = "5.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1635a5ce6e8ec7703180a36a6c1ca701bd9cd003a37f2b2ea27a05a2b21d45f1"
+checksum = "5da562590d2c2efe2d9cf0aa445b8e72a394afa216152364ef6970b6e27c5a77"
 dependencies = [
  "solana-account-info",
  "solana-big-mod-exp",
@@ -1095,7 +1095,7 @@ dependencies = [
  "solana-fee-calculator",
  "solana-hash",
  "solana-instruction 4.0.0",
- "solana-instruction-error 3.0.0",
+ "solana-instruction-error 3.1.0",
  "solana-instructions-sysvar",
  "solana-keccak-hasher",
  "solana-last-restart-slot",
@@ -1170,18 +1170,18 @@ dependencies = [
 
 [[package]]
 name = "solana-pubkey"
-version = "4.3.0"
+version = "4.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "10f71b7a414de2ced1071f015834e9be581592d013432adbd06d02e4af11eba9"
+checksum = "e2b8ba5d677d77a76d557b59ce7ecf9a8578743089cb25c73990752c5f005885"
 dependencies = [
  "solana-address",
 ]
 
 [[package]]
 name = "solana-rent"
-version = "4.4.0"
+version = "4.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc016b348926395ba01f8288cdf5da25fc30f5a0806028b32d5e5b3147b10bf9"
+checksum = "6e7c7590d4e53446a00c363783d98199d8c8f5099ca60eaf2a0f1f50d0e7a31e"
 dependencies = [
  "serde",
  "serde_derive",
@@ -1244,7 +1244,7 @@ version = "4.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "46f844dab1b29cc8c1a3413b96bf0ef9fba44f47be53ec498ce01507ab4b5520"
 dependencies = [
- "solana-instruction-error 3.0.0",
+ "solana-instruction-error 3.1.0",
  "solana-pubkey",
  "solana-sanitize",
 ]
@@ -1357,7 +1357,7 @@ dependencies = [
  "solana-get-sysvar",
  "solana-hash",
  "solana-instruction 4.0.0",
- "solana-instruction-error 3.0.0",
+ "solana-instruction-error 3.1.0",
  "solana-last-restart-slot",
  "solana-program-entrypoint",
  "solana-program-error",
