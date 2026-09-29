@@ -46,6 +46,6 @@
     "@noble/post-quantum": "0.7.1"
   },
   "devDependencies": {
-    "tsx": "4.23.13"
+    "tsx": "4.23.15"
   }
 }
