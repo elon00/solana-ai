@@ -1,0 +1,25 @@
+name: Portfolio Reality Audit
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * 1'
+permissions:
+  contents: read
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Inventory repositories (read-only)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PORTFOLIO_OWNER: elon00
+        run: python scripts/portfolio_reality_audit.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: portfolio-audit
+          path: audit-output/
