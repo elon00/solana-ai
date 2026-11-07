@@ -1,0 +1,350 @@
+{
+  "engine": "REA_Reverse_Engineer_Anything",
+  "status": "STRUCTURE_RECONSTRUCTED",
+  "analyzed_files": 114,
+  "manifest": {
+    "actions.json": {
+      "bytes": 196
+    },
+    "ai-powered-blockchain-revolut.mp4": {
+      "bytes": 9442251
+    },
+    "AUTONOMOUS_BLUEPRINT.md": {
+      "bytes": 2035
+    },
+    "BIBLEAI": {
+      "bytes": 77
+    },
+    "checklist for solana project.docx": {
+      "bytes": 19294
+    },
+    "Code for Solana AI Chatbot": {
+      "bytes": 535
+    },
+    "Code for Solana AI Coin": {
+      "bytes": 2442
+    },
+    "Code for Website AI Agency": {
+      "bytes": 258
+    },
+    "Code wirting guide.docx": {
+      "bytes": 21234
+    },
+    "CODE WRITING TEMPLATE.docx": {
+      "bytes": 18925
+    },
+    "colosseum-submission.json": {
+      "bytes": 2416
+    },
+    "COLOSSEUM_READINESS.md": {
+      "bytes": 3908
+    },
+    "CONTRIBUTING.md": {
+      "bytes": 982
+    },
+    "CRASH COURSE FOR RUST.docx": {
+      "bytes": 24120
+    },
+    "Gitlab Project Temple": {
+      "bytes": 41
+    },
+    "IMG-20240929-WA0094.jpg": {
+      "bytes": 118795
+    },
+    "IMG_20240930_142541.jpg": {
+      "bytes": 194614
+    },
+    "index.html": {
+      "bytes": 59147
+    },
+    "LAUNCHPAD.md": {
+      "bytes": 1663
+    },
+    "Library for Solana Project": {
+      "bytes": 112
+    },
+    "LICENSE": {
+      "bytes": 10349
+    },
+    "Mastering Rust for Solana Book": {
+      "bytes": 187
+    },
+    "Mr_Martin_Luther20241011-72-1wjk7ct.jpg": {
+      "bytes": 154677
+    },
+    "Mr_Martin_Luther20241011-72-84uhtk.jpg": {
+      "bytes": 157102
+    },
+    "Mr_Martin_Luther20241012-74-1p4rii5.jpg": {
+      "bytes": 153665
+    },
+    "Mr_Martin_Luther20241012-74-vp9fq7.jpg": {
+      "bytes": 153898
+    },
+    "My Portfolio for Projects": {
+      "bytes": 126
+    },
+    "netlify.toml": {
+      "bytes": 617
+    },
+    "ONE-CLICK-TESTNET-DEPLOY.bat": {
+      "bytes": 1423
+    },
+    "package-lock.json": {
+      "bytes": 18116
+    },
+    "package.json": {
+      "bytes": 1907
+    },
+    "Project Charter": {
+      "bytes": 8940
+    },
+    "Purposal of Code writing": {
+      "bytes": 5760
+    },
+    "README.md": {
+      "bytes": 6998
+    },
+    "REALITY_MANIFEST.json": {
+      "bytes": 5266
+    },
+    "Resume": {
+      "bytes": 2
+    },
+    "revolutionize-your-presentatio.mp4": {
+      "bytes": 10618580
+    },
+    "Rust Language": {
+      "bytes": 135
+    },
+    "Rust-A-Modern-Systems-Programming-Language.pdf": {
+      "bytes": 3186884
+    },
+    "SECURITY.md": {
+      "bytes": 1123
+    },
+    "Solana AI Chatbot": {
+      "bytes": 94
+    },
+    "Solana AI for all AI tools": {
+      "bytes": 107
+    },
+    "Solana AI website": {
+      "bytes": 78
+    },
+    "Solana AI.zip": {
+      "bytes": 1686268
+    },
+    "Solana Project Charter.docx": {
+      "bytes": 24869
+    },
+    "TESTNET_DEPLOYMENT.md": {
+      "bytes": 2222
+    },
+    "THE-CREATOR-GOVERNANCE.md": {
+      "bytes": 593
+    },
+    "URS_EVIDENCE_CERTIFICATE.json": {
+      "bytes": 488
+    },
+    "WEB4_ARCHITECTURE.md": {
+      "bytes": 1682
+    },
+    "x402-bazaar.json": {
+      "bytes": 3295
+    },
+    "x402.json": {
+      "bytes": 3295
+    },
+    "X402_INTEGRATION.md": {
+      "bytes": 3415
+    },
+    "YouTube Video link": {
+      "bytes": 87
+    },
+    ".github\\dependabot.yml": {
+      "bytes": 418
+    },
+    "docs\\actions.json": {
+      "bytes": 196
+    },
+    "docs\\colosseum-submission.json": {
+      "bytes": 2229
+    },
+    "docs\\index.html": {
+      "bytes": 59147
+    },
+    "docs\\logo.png": {
+      "bytes": 118795
+    },
+    "docs\\x402-bazaar.json": {
+      "bytes": 3295
+    },
+    "docs\\x402.json": {
+      "bytes": 3295
+    },
+    "program\\Cargo.lock": {
+      "bytes": 44624
+    },
+    "program\\Cargo.toml": {
+      "bytes": 455
+    },
+    "public\\actions.json": {
+      "bytes": 196
+    },
+    "public\\colosseum-submission.json": {
+      "bytes": 2229
+    },
+    "public\\index.html": {
+      "bytes": 59147
+    },
+    "public\\logo.png": {
+      "bytes": 118795
+    },
+    "public\\x402-bazaar.json": {
+      "bytes": 3295
+    },
+    "public\\x402.json": {
+      "bytes": 3295
+    },
+    "scripts\\audit-crypto.mjs": {
+      "bytes": 7660
+    },
+    "scripts\\autonomous-tech-audit.mjs": {
+      "bytes": 3928
+    },
+    "scripts\\check-colosseum-readiness.mjs": {
+      "bytes": 2806
+    },
+    "scripts\\check-real-features.mjs": {
+      "bytes": 4568
+    },
+    "scripts\\check-x402-facilitator.mjs": {
+      "bytes": 817
+    },
+    "scripts\\colosseum-copilot.mjs": {
+      "bytes": 3047
+    },
+    "scripts\\create-solana-wallet.mjs": {
+      "bytes": 1169
+    },
+    "scripts\\generate-urs-certificate.ts": {
+      "bytes": 4836
+    },
+    "scripts\\portfolio_reality_audit.py": {
+      "bytes": 2059
+    },
+    "scripts\\reality-universal.ts": {
+      "bytes": 18197
+    },
+    "scripts\\rea_inspector.py": {
+      "bytes": 1485
+    },
+    "scripts\\rsi_engine.py": {
+      "bytes": 2039
+    },
+    "src\\index.ts": {
+      "bytes": 224
+    },
+    "src\\solana_ai.ts": {
+      "bytes": 5599
+    },
+    "src\\types.ts": {
+      "bytes": 840
+    },
+    "tests\\agentic-web4.test.mjs": {
+      "bytes": 4540
+    },
+    "tests\\nextgen-integrations.test.mjs": {
+      "bytes": 2496
+    },
+    "tests\\nist-pqc.test.mjs": {
+      "bytes": 4542
+    },
+    "tests\\reality_check_harness.py": {
+      "bytes": 1364
+    },
+    "tests\\x402.test.mjs": {
+      "bytes": 7950
+    },
+    ".github\\deploy\\testnet-request.json": {
+      "bytes": 552
+    },
+    ".github\\workflows\\autonomous-one-click.yml": {
+      "bytes": 1436
+    },
+    ".github\\workflows\\ci.yml": {
+      "bytes": 1332
+    },
+    ".github\\workflows\\deploy-pages.yml": {
+      "bytes": 726
+    },
+    ".github\\workflows\\portfolio-reality-audit.yml": {
+      "bytes": 660
+    },
+    ".github\\workflows\\qmoosa-rsi-rea-sync.yml": {
+      "bytes": 531
+    },
+    ".github\\workflows\\security.yml": {
+      "bytes": 1433
+    },
+    ".github\\workflows\\solana-testnet-deploy.yml": {
+      "bytes": 12736
+    },
+    ".github\\workflows\\token-launchpad-testnet.yml": {
+      "bytes": 9097
+    },
+    "docs\\api\\v1\\status\\index.html": {
+      "bytes": 515
+    },
+    "docs\\api\\v1\\x402\\agent\\action\\index.html": {
+      "bytes": 756
+    },
+    "netlify\\functions\\api.ts": {
+      "bytes": 10800
+    },
+    "program\\src\\lib.rs": {
+      "bytes": 3174
+    },
+    "public\\api\\v1\\status\\index.html": {
+      "bytes": 515
+    },
+    "public\\api\\v1\\x402\\agent\\action\\index.html": {
+      "bytes": 756
+    },
+    "src\\conway\\conwayAutomaton.ts": {
+      "bytes": 1827
+    },
+    "src\\integrations\\nextgen.mjs": {
+      "bytes": 4636
+    },
+    "src\\integrations\\nextgen.ts": {
+      "bytes": 2677
+    },
+    "src\\utils\\pqcCrypto.ts": {
+      "bytes": 7824
+    },
+    "src\\wallets\\multiWallet.ts": {
+      "bytes": 4604
+    },
+    "src\\x402\\agentAction.ts": {
+      "bytes": 1543
+    },
+    "src\\x402\\client.ts": {
+      "bytes": 4889
+    },
+    "src\\x402\\facilitator.ts": {
+      "bytes": 3084
+    },
+    "src\\x402\\index.ts": {
+      "bytes": 168
+    },
+    "src\\x402\\protocol.ts": {
+      "bytes": 4941
+    },
+    "src\\x402\\resourceGate.ts": {
+      "bytes": 3346
+    }
+  },
+  "timestamp": 1794039254
+}
