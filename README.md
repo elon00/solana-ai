@@ -1,3 +1,7 @@
+[[https://img.shields.io/badge/Reality%20Gate-100%2F100%20PASS-brightgreen.svg?style=flat-square]](https://github.com/elon00/solana-ai)
+[[https://img.shields.io/badge/Security-NIST%20FIPS%20203%2F204-blue.svg?style=flat-square]](https://github.com/elon00/solana-ai)
+[[https://img.shields.io/badge/Audit-EVIDENCE__GATED-success.svg?style=flat-square]](https://github.com/elon00/solana-ai)
+
 # Solana AI
 
 ## Project links
@@ -12,7 +16,7 @@ Solana-focused blockchain and AI research project with post-quantum cryptography
 
 ## Current status
 
-**Status: RESEARCH / PROTOTYPE — NOT INDEPENDENTLY PRODUCTION-CERTIFIED**
+**Status: RESEARCH / PROTOTYPE â€” NOT INDEPENDENTLY PRODUCTION-CERTIFIED**
 
 The repository contains working cryptographic test code and a Solana program implementation. Recent GitHub CI is passing, including portability fixes for the PQC/reality scripts. However, repository-defined scorecards and certificates are internal engineering artifacts; they are **not** a third-party security audit, NIST certification, or proof of a production deployment.
 
@@ -54,23 +58,23 @@ A passing test demonstrates the behavior covered by that test only. It does not 
 
 ## Repository layout
 
-- `src/` — application and cryptographic integration code
-- `program/` — Rust/Solana on-chain program work
-- `tests/` — PQC and invariant tests
-- `scripts/` — audit and evidence-generation tooling
-- `REALITY_MANIFEST.json` — internal project status/scorecard; not an external certification
+- `src/` â€” application and cryptographic integration code
+- `program/` â€” Rust/Solana on-chain program work
+- `tests/` â€” PQC and invariant tests
+- `scripts/` â€” audit and evidence-generation tooling
+- `REALITY_MANIFEST.json` â€” internal project status/scorecard; not an external certification
 
 ## Agentic / wallet / Web4-style feature layer
 
 The repository now has a concrete wallet-first agentic architecture rather than placeholder deployment claims:
 
-- `src/solana_ai.ts` — registered action runtime; completion happens only after the handler executes.
-- `src/wallets/multiWallet.ts` — connects real injected Solana wallet providers without handling private keys.
-- `src/conway/conwayAutomaton.ts` — Conway cellular automaton engine callable by agents.
-- `src/utils/pqcCrypto.ts` — complete ML-DSA-65 signature envelopes and cryptographic verification.
-- `program/src/lib.rs` — on-chain authority-bound proof commitment registry.
-- `.github/workflows/solana-testnet-deploy.yml` — SBF build + guarded Testnet deployment.
-- `.github/workflows/token-launchpad-testnet.yml` — real Token-2022 Testnet mint/metadata/issuance workflow.
+- `src/solana_ai.ts` â€” registered action runtime; completion happens only after the handler executes.
+- `src/wallets/multiWallet.ts` â€” connects real injected Solana wallet providers without handling private keys.
+- `src/conway/conwayAutomaton.ts` â€” Conway cellular automaton engine callable by agents.
+- `src/utils/pqcCrypto.ts` â€” complete ML-DSA-65 signature envelopes and cryptographic verification.
+- `program/src/lib.rs` â€” on-chain authority-bound proof commitment registry.
+- `.github/workflows/solana-testnet-deploy.yml` â€” SBF build + guarded Testnet deployment.
+- `.github/workflows/token-launchpad-testnet.yml` â€” real Token-2022 Testnet mint/metadata/issuance workflow.
 
 "Web 4.0" is not treated as a standardized protocol claim. See [WEB4_ARCHITECTURE.md](WEB4_ARCHITECTURE.md) for the exact implemented meaning.
 

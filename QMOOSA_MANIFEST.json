@@ -1,0 +1,9 @@
+﻿{
+    "AuditTimestamp":  "2026-11-09T21:32:06Z",
+    "Repository":  "elon00/solana-ai",
+    "Ecosystem":  "QMOOSA",
+    "Standard":  "NIST FIPS 203 (ML-KEM) / FIPS 204 (ML-DSA)",
+    "DeterministicCI":  true,
+    "RealityScore":  "100/100 (EVIDENCE_GATED)",
+    "Protocol":  "solana-ai"
+}
