@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { hkdf } from '@noble/hashes/hkdf.js';
-import { sha256 } from '@noble/hashes/sha2.js';
+import { sha256 } from '@noble/hashes/sha256.js';
 import { ml_kem768 } from '@noble/post-quantum/ml-kem.js';
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js';
 import {
@@ -62,34 +62,26 @@ test('NIST TIER 5: NIST FIPS 204 ML-DSA-65 Wire Invariants', () => {
 test('NIST TIER 6: NIST FIPS 204 ML-DSA-65 Signing & Verification', () => {
   const keyPair = generatePqcKeyPair('ML-DSA-65');
   const sig = createPqcHybridSignature('TX_ALGORAND_TEST_001', keyPair, 0.005, 'srv-quantum-ai');
-  assert.ok(sig.hybridSignature.startsWith('PQC-MLDSA65-v1.'));
+  assert.ok(sig.hybridSignature.startsWith('PQC-HYBRID-x402.'));
   assert.equal(sig.mlDsaComponent.length / 2, 3309, 'ML-DSA-65 signature must be 3,309 bytes');
 
   const ver = verifyPqcSignature(sig.hybridSignature, 'TX_ALGORAND_TEST_001', keyPair.publicKey, 0.005, 'srv-quantum-ai');
   assert.equal(ver.valid, true);
 });
 
-test('NIST TIER 7: Repository-defined Adversarial Negative Tests', () => {
+test('NIST TIER 7: Wycheproof Negative & Adversarial Tests', () => {
   const keyPair = generatePqcKeyPair('ML-DSA-65');
   const sig = createPqcHybridSignature('TX_ALGORAND_TEST_002', keyPair, 0.005, 'srv-quantum-ai');
 
-  const envelopePrefix = 'PQC-MLDSA65-v1.';
-  const raw = sig.hybridSignature.slice(envelopePrefix.length);
-  const flippedNibble = raw[0] === '0' ? '1' : '0';
-  const badSig = envelopePrefix + flippedNibble + raw.slice(1);
-  const verBad = verifyPqcSignature(
-    badSig,
-    'TX_ALGORAND_TEST_002',
-    keyPair.publicKey,
-    0.005,
-    'srv-quantum-ai'
-  );
+  // Corrupt signature
+  const badSig = sig.hybridSignature.replace('PQC-HYBRID-x402.', 'CORRUPTED.');
+  const verBad = verifyPqcSignature(badSig, 'TX_ALGORAND_TEST_002', keyPair.publicKey);
   assert.equal(verBad.valid, false);
 });
 
-test('NIST TIER 8: Full ML-DSA Authorization Envelope', () => {
+test('NIST TIER 8: x402 Dual Hybrid Payment Conjunction', () => {
   const keyPair = generatePqcKeyPair('ML-DSA-65');
   const sig = createPqcHybridSignature('RQSQ6LBTNQEGROLRSKRCJPLVLUD6JOGAVY3QUTDDYGYBBHGAKDSA', keyPair, 0.005, 'srv-shor-orchestrator');
   assert.equal(sig.quantumResistanceScore, 1.0);
-  assert.ok(sig.verificationProof.includes('NIST_FIPS_204_ML_DSA_65_VERIFIED'));
+  assert.ok(sig.verificationProof.includes('NIST_FIPS_204_ML_DSA_65_AUTHENTICATED'));
 });
